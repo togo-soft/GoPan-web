@@ -1,0 +1,118 @@
+<template>
+    <div class="card fat">
+        <b-alert
+                :show="dismissCountDown"
+                dismissible
+                fade
+                variant="warning"
+                @dismiss-count-down="countDownChanged"
+        >
+            {{warningMessage}}
+        </b-alert>
+        <div class="card-body">
+            <h4 class="card-title">Login</h4>
+            <form role="form">
+                <b-form-group label="Username">
+                    <b-form-input id="username" v-model="user.username" trim required autofocus></b-form-input>
+                </b-form-group>
+                <b-form-group>
+                    <label>Password
+                        <router-link :to="{name:'forgot'}" class="float-right">
+                            Forgot Password?
+                        </router-link>
+                    </label>
+                    <b-form-input id="password" type="password" v-model="user.password" required></b-form-input>
+                </b-form-group>
+                <div class="form-group">
+                    <b-form-checkbox
+                            id="remember"
+                            v-model="user.remember"
+                            name="remember"
+                            value="true"
+                            unchecked-value="false"
+                    >
+                        <span v-b-tooltip.hover title="Checking this option will always log in status">Remember Me</span>
+                    </b-form-checkbox>
+                </div>
+                <div class="form-group m-0">
+                    <button type="button" class="btn btn-primary btn-block" @click="signIn">
+                        Login
+                    </button>
+                </div>
+                <div class="mt-4 text-center">
+                    Don't have an account? <router-link :to="{name:'register'}">Create One</router-link>
+                </div>
+            </form>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'login',
+        data() {
+            return {
+                user: {
+                    username: '',
+                    password: '',
+                    remember: false
+                },
+                dismissSecs: 5,
+                dismissCountDown: 0,
+                showDismissibleAlert: false,
+                warningMessage: '',
+            }
+        },
+        methods: {
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown;
+            },
+            signIn() {
+                //检测输入项是否为空
+                if (this.user.username === "" || this.user.password === "") {
+                    this.dismissCountDown = this.dismissSecs;
+                    this.warningMessage = 'Input options cannot be empty!';
+                    return;
+                }
+                //开始登陆请求
+                //开始登陆逻辑 将token记录 如果未勾选remember 将token存入sessionStorage中 否则存储在localStorage中
+                let param = new URLSearchParams({
+                    username: this.user.username,
+                    password: this.user.password
+                });
+                let _this = this;
+                this.$ajax
+                    .post(this.server +"/api/general/signin", param)
+                    .then(function(response) {
+                        var data = response.data;
+                        if(_this.user.remember) {
+                            //写入localStorage中
+                            localStorage.setItem("_type",'localStorage');//记录方式 是否使用localStorage存储token
+                            localStorage.setItem("_token",data.message);
+                            localStorage.setItem("_uid",data.data.id);
+                            localStorage.setItem("_username",data.data.username);
+                        }else{
+                            //写入sessionStorage中
+                            sessionStorage.setItem("_token",data.message);
+                            sessionStorage.setItem("_uid",data.data.id);
+                            sessionStorage.setItem("_username",data.data.username);
+                        }
+                        //跳转到后台
+                        _this.$router.push({
+                            path: _this.redirect || "/user/dashboard"
+                        });
+                    })
+                    .catch(error => {
+                        _this.dismissCountDown = _this.dismissSecs;
+                        _this.warningMessage = error.response.data.message;
+                        return;
+                    });
+            }
+        },
+        created() {
+            //删除本地存储localStorage
+            localStorage.clear();
+            sessionStorage.clear();
+        }
+    }
+</script>
