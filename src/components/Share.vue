@@ -17,8 +17,8 @@
     export default {
         name: 'share',
         props: {
-            file: {
-                type: Object,
+            id: {
+                type: String,
             },
             user: {
                 type: Object,
@@ -33,7 +33,7 @@
                     Authorization: "Bearer " + this.user.token,
                     uid: this.user.uid
                 };
-                this.$ajax.get(this.server + '/api/file/share?username=' + this.user.username + '&id=' + this.file.id, {
+                this.$ajax.get(this.server + '/api/file/share?username=' + this.user.username + '&id=' + this.id, {
                     headers: headers
                 }).then(response => {
                     console.log(response.data);

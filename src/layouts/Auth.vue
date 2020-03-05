@@ -30,7 +30,7 @@
     }
 </script>
 
-<style scoped>
+<style>
     html, body, .my-login-page {
         height: 100%;
     }

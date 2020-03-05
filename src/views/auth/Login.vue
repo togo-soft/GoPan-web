@@ -80,31 +80,38 @@
                     username: this.user.username,
                     password: this.user.password
                 });
-                let _this = this;
                 this.$ajax
                     .post(this.server +"/api/general/signin", param)
-                    .then(function(response) {
-                        var data = response.data;
-                        if(_this.user.remember) {
+                    .then(response => {
+                        let data = response.data;
+                        if(this.user.remember) {
                             //写入localStorage中
                             localStorage.setItem("_type",'localStorage');//记录方式 是否使用localStorage存储token
                             localStorage.setItem("_token",data.message);
+                            localStorage.setItem("_fk",data.data.fk);
+                            localStorage.setItem("_iv",data.data.iv);
+                            localStorage.setItem("_ak",data.data.ak);
                             localStorage.setItem("_uid",data.data.id);
                             localStorage.setItem("_username",data.data.username);
+                            localStorage.setItem("_login","yes");
                         }else{
                             //写入sessionStorage中
                             sessionStorage.setItem("_token",data.message);
                             sessionStorage.setItem("_uid",data.data.id);
+                            sessionStorage.setItem("_fk",data.data.fk);
+                            sessionStorage.setItem("_iv",data.data.iv);
+                            sessionStorage.setItem("_ak",data.data.ak);
                             sessionStorage.setItem("_username",data.data.username);
+                            sessionStorage.setItem("_login","yes");
                         }
                         //跳转到后台
-                        _this.$router.push({
-                            path: _this.redirect || "/user/dashboard"
+                        this.$router.push({
+                            path: this.redirect || "/user/dashboard"
                         });
                     })
                     .catch(error => {
-                        _this.dismissCountDown = _this.dismissSecs;
-                        _this.warningMessage = error.response.data.message;
+                        this.dismissCountDown = this.dismissSecs;
+                        this.warningMessage = error.response.data.message;
                         return;
                     });
             }

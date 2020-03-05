@@ -9,25 +9,13 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <b-button type="button" variant="primary" class="mr-2">
-                                                <i class="fas fa-cloud-upload-alt"></i> Upload
-                                            </b-button>
-                                            <b-button type="button" variant="primary">
-                                                <i class="fas fa-folder-plus"></i> Mkdir
-                                            </b-button>
+                                            <h3>Shared list</h3>
                                         </div>
                                         <div class="col text-right">
-                                            <b-button type="button" variant="primary">
+                                            <b-button type="button" variant="primary" @click="refresh">
                                                 <i class="fas fa-sync-alt"></i> Refresh
                                             </b-button>
                                         </div>
-                                    </div>
-                                    <div class="row align-items-center">
-                                        <h5 class="mb-0 ml-3 mt-2 path-style">
-                                            <template>
-                                                <b-breadcrumb :items="path_items"></b-breadcrumb>
-                                            </template>
-                                        </h5>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
@@ -37,7 +25,6 @@
                                             stacked="md"
                                             :items="items"
                                             :fields="fields"
-                                            @row-hovered="isHovered"
                                             table-class="table-style"
                                     >
                                         <template v-slot:cell(filename)="row">
@@ -69,16 +56,10 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="share" href="javascript:void(0)" title="share">
-                                                    <i class="fas fa-share-alt-square"></i>
+                                                <a class="remove" href="javascript:void(0)" title="Copy file share key" v-clipboard:copy="row.item.fsk">
+                                                    <i class="fas fa-copy"></i>
                                                 </a>
-                                                <a class="edit" href="javascript:void(0)" title="edit">
-                                                    <i class="fas fa-pen-square"></i>
-                                                </a>
-                                                <a class="download" href="javascript:void(0)" title="download">
-                                                    <i class="fas fa-arrow-circle-down"></i>
-                                                </a>
-                                                <a class="remove" href="javascript:void(0)" title="Remove">
+                                                <a class="remove" href="javascript:void(0)" title="Cancel sharing" @click="cancel(row.item.id)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </div>
@@ -116,65 +97,90 @@
         name: 'shared',
         data() {
             return {
+                // file是文件上传模态的数据对象
+                file: {
+                    directory_name: '',
+                    fid: '',
+                    current_file: null,//文件对象
+                    progress_max: 100,//进度条最大值
+                    progress_rate: 0,//进度条初始值
+                    show_progress: false,//显示进度条? 在点击上传按钮触发
+                    show_upload_result: false,//上传结果 上传结束后或者上传失败触发
+                    show_message: '',//模态输出信息
+                    dismissSecs: 5,//默认提示消息5秒后自动关闭
+                    dismissCountDown: 0,//当达到0时 自动关闭消息提醒
+                    showDismissibleAlert: false,//默认打开消息提醒？
+                    alertVariant: 'success',//默认消息提示颜色
+                    storage_result: {},//上传结果
+                },
+                //文件系统路径 每次操作目录都需要刷新该结果集
                 path_items: [
-                    {
-                        text: 'All File',
-                        href: '#'
-                    },
-                    {
-                        text: 'Manage',
-                        href: '#'
-                    },
-                    {
-                        text: 'Library',
-                        active: true
-                    }
+
                 ],
-                items: [
-                    {filename: 'Typora', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Music', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Video', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Game', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Typora.zip', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.jpeg', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.mp3', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.mp4', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.html', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.css', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.js', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.exe', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.doc', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.blc', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                ],
+                // 某文件夹中的数据列表
+                items: [],
                 fields: [
                     {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size'},
-                    {key: 'utime', label: 'Update Time', class: 'text-center'},
+                    {key: 'uptime', label: 'Update Time', class: 'text-center'},
                     {key: 'actions', label: 'Actions'},
                 ],
-                totalRows: 1,
-                currentPage: 1,
-                perPage: 5,
-                pageOptions: [5, 10, 15],
-                sortBy: '',
-                sortDesc: false,
-                sortDirection: 'asc',
-                filter: null,
-                filterOn: [],
-                infoModal: {
-                    id: 'info-modal',
-                    title: '',
-                    content: ''
-                }
+                user: {},// token uid username
+                preview: {
+                    fileType: {},
+                    source: ''
+                },
+                removeFileObject: {
+
+                },
             }
         },
         methods: {
-            isHovered(item, index, event) {
-                //todo
+            countDownChanged(dismissCountDown) {
+                this.file.dismissCountDown = dismissCountDown
+            },
+            refresh(){
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                //获取当前文件夹文件列表
+                this.$ajax
+                    .get(this.server +"/api/file/share/list?username="+this.user.username,{
+                        headers:headers
+                    })
+                    .then(response => {
+                        //先清空数组元素
+                        this.items.splice(0);
+                        //将结果Push到数组
+                        this.items.push.apply(this.items,response.data.data);
+                    })
+                    .catch(error => {
+                        if (error.response.status === 400) {
+                            alert("token错误");
+                            this.$router.push({
+                                path: this.redirect || "/auth/login"
+                            });
+                        }
+                        console.log(error.response);
+                    });
+            },
+            cancel(id){
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                this.$ajax.get(this.server + '/api/file/share/cancel?username=' + this.user.username + '&id=' + id, {
+                    headers: headers
+                }).then(response => {
+                    console.log(response.data);
+                });
+            },
+            copy(key) {
 
             },
             iconType(filename) {
-                var result = FileTools.matchType(filename);
+                let res = FileTools.matchType(filename);
+                let result = res.result;
                 if (result === 'image') {
                     //图片后缀
                     return {
@@ -196,10 +202,25 @@
                         fas: true,
                         'fas fa-file-video': true
                     }
-                } else if (result === 'document') {
+                } else if (result === 'word') {
                     return {
                         fas: true,
                         'fas fa-file-word': true
+                    }
+                }else if (result === 'pdf'){
+                    return {
+                        fas: true,
+                        'fas fa-file-pdf': true
+                    }
+                }else if (result === 'ppt'){
+                    return {
+                        fas: true,
+                        'fas fa-file-powerpoint': true
+                    }
+                }else if (result === 'excel'){
+                    return {
+                        fas: true,
+                        'fas fa-file-excel': true
                     }
                 }else if (result === 'code') {
                     return {
@@ -213,12 +234,53 @@
                         'fas fa-question': true
                     }
                 }
+            },
+            fileType(filename) {
+                return FileTools.matchType(filename);
+            },
+            getToken(){
+                //获取token 若不存在 则跳转到登录页面 若存在 则拉取页面数据 中间过程中进行鉴权
+                if(localStorage.getItem("_type") === "localStorage") {
+                    //token在localStorage 上
+                    this.user.token = localStorage.getItem("_token");
+                    this.user.uid = localStorage.getItem("_uid");
+                    this.user.username = localStorage.getItem("_username");
+                }else{
+                    //token在sessionStorage中
+                    this.user.token = sessionStorage.getItem("_token");
+                    this.user.uid = sessionStorage.getItem("_uid");
+                    this.user.username = sessionStorage.getItem("_username");
+                }
+                return !(this.user.token === null || this.user.uid === null);
+            },
+        },
+        created() {
+            if(!this.getToken()) {
+                //没有token相关信息 页面重定向
+                return;
+            }else{
+                // 登录成功 获取文件根目录
+                var headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                //获取根文件列表
+                this.$ajax
+                    .get(this.server +"/api/file/share/list?username="+this.user.username,{
+                        headers:headers
+                    })
+                    .then(response => {
+                        this.items.push.apply(this.items,response.data.data);
+                    })
+                    .catch(error => {
+                        //获取根目录失败
+                    });
             }
         },
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .stats-percentage {
         padding-right: 5px;
         color: #ffde08;
@@ -246,8 +308,8 @@
         background-color: #fff;
     }
 
-    .btn-primary {
-        border-radius: 5px;
+    .btn-primary,.btn-danger {
+        border-radius: 5px !important;
     }
 
     .breadcrumb {

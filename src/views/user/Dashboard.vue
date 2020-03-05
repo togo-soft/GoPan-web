@@ -96,7 +96,10 @@
 
                                         <template v-slot:cell(size)="row">
                                             <div class="field-style">
-                                                <span v-if="row.value < 1000">
+                                                <span v-if="row.item.isDir">
+                                                    -
+                                                </span>
+                                                <span v-else-if="row.value < 1000">
                                                     {{row.value}} KB
                                                 </span>
                                                 <span v-else>
@@ -296,7 +299,7 @@
                 param.append('file',this.file.current_file);
                 param.append('scene','default');
                 param.append('output','json');
-                param.append('path',this.user.username);
+                // param.append('path',this.user.username);
                 let config = {
                     headers: { 'Content-Type': 'multipart/form-data' },
                     onUploadProgress: e => {

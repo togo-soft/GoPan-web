@@ -13,16 +13,8 @@
                                 <div class="stats-data">
                                     <div class="stats-number">
                                         <span v-b-tooltip.hover title="Used disk size">
-                                            114KB
+                                            {{calc(upload_total.totalSize)}}
                                         </span>
-                                        /
-                                        <span v-b-tooltip.hover title="Total disk space">
-                                            5G
-                                        </span>
-                                    </div>
-                                    <div class="stats-change">
-                                        <span class="stats-percentage">-25%</span>
-                                        <span class="stats-timeframe">Used ratio</span>
                                     </div>
                                 </div>
                             </div>
@@ -31,101 +23,118 @@
                 </div>
                 <b-container fluid class="mt-4 mb-4">
                     <b-row>
-                        <b-col xl="10" lg="10" md="10" sm="12" offset-xl="1" offset-lg="1" offset-md="1">
-                            <div class="card shadow">
-                                <div class="card-header border-0">
-                                    <div class="row align-items-center">
-                                        <div class="col">
-                                            <b-button type="button" variant="primary" class="mr-2">
-                                                <i class="fas fa-cloud-upload-alt"></i> Upload
-                                            </b-button>
-                                            <b-button type="button" variant="primary">
-                                                <i class="fas fa-folder-plus"></i> Mkdir
-                                            </b-button>
-                                        </div>
-                                        <div class="col text-right">
-                                            <b-button type="button" variant="primary">
-                                                <i class="fas fa-sync-alt"></i> Refresh
-                                            </b-button>
-                                        </div>
+                        <b-col xl="6" lg="6" md="12" sm="12">
+                            <div class="card spur-card">
+                                <div class="card-header">
+                                    <div class="spur-card-icon">
+                                        <i class="fas fa-chart-bar"></i>
                                     </div>
-                                    <div class="row align-items-center">
-                                        <h5 class="mb-0 ml-3 mt-2 path-style">
-                                            <template>
-                                                <b-breadcrumb :items="path_items"></b-breadcrumb>
-                                            </template>
-                                        </h5>
-                                    </div>
+                                    <div class="spur-card-title"> Recently uploaded statistics</div>
                                 </div>
-                                <div class="table-responsive">
-                                    <b-table
-                                            show-empty
-                                            small
-                                            stacked="md"
-                                            :items="items"
-                                            :fields="fields"
-                                            @row-hovered="isHovered"
-                                            table-class="table-style"
+                                <div class="card-body ">
+                                    <table class="table table-striped table-in-card">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Count</th>
+                                            <th scope="col">Size</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="item in upload_record">
+                                            <td>{{item.date}}</td>
+                                            <td>{{item.fileCount}}</td>
+                                            <td>{{calc(item.totalSize)}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </b-col>
+
+                        <b-col xl="6" lg="6" md="12" sm="12">
+                            <div class="card spur-card">
+                                <div class="card-header">
+                                    <div class="spur-card-icon">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </div>
+                                    <div class="spur-card-title"> Cluster operation</div>
+                                </div>
+                                <div class="card-body ">
+                                    <b-alert
+                                            :show="dismissCountDown"
+                                            dismissible
+                                            fade
+                                            variant="success"
+                                            @dismiss-count-down="countDownChanged"
                                     >
-                                        <template v-slot:cell(filename)="row">
-                                            <div class="media align-items-center first-field-style">
-                                                <span v-if="row.item.isDir" class="avatar rounded-circle"
-                                                      style="font-size: 24px; color: Dodgerblue;">
-                                                    <i class="fas fa-folder"></i>
-                                                </span>
-                                                <span v-else class="avatar rounded-circle" style="font-size: 24px; color: Mediumslateblue;">
-                                                    <i :class="iconType(row.value)"></i>
-                                                </span>
-                                                <span class="name mb-0 text-sm">
-                                                        {{ row.value }}
-                                                    </span>
-                                            </div>
-                                        </template>
-
-                                        <template v-slot:cell(size)="row">
-                                            <div class="field-style">
-                                                {{ row.value }}
-                                            </div>
-                                        </template>
-
-                                        <template v-slot:cell(utime)="row">
-                                            <div class="field-style">
-                                                {{ row.value }}
-                                            </div>
-                                        </template>
-
-                                        <template v-slot:cell(actions)="row">
-                                            <div class="field-style">
-                                                <a class="share" href="javascript:void(0)" title="share">
-                                                    <i class="fas fa-share-alt-square"></i>
-                                                </a>
-                                                <a class="edit" href="javascript:void(0)" title="edit">
-                                                    <i class="fas fa-pen-square"></i>
-                                                </a>
-                                                <a class="download" href="javascript:void(0)" title="download">
-                                                    <i class="fas fa-arrow-circle-down"></i>
-                                                </a>
-                                                <a class="remove" href="javascript:void(0)" title="Remove">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                            </div>
-                                        </template>
-
-                                    </b-table>
+                                        {{warningMessage}}
+                                    </b-alert>
+                                    <b-jumbotron lead="Click to start manual cluster synchronization.">
+                                        <b-button variant="primary" class="mr-2 mb-2" @click="repair_sync">Repair</b-button>
+                                    </b-jumbotron>
                                 </div>
-                                <div class="card-footer d-flex justify-content-end">
-                                    <ul class="pagination">
-                                        <li class="page-item prev-page disabled"><a aria-label="Previous"
-                                                                                    class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true"
-                                                                      class="fa fa-angle-left"></i></span></a></li>
-                                        <li class="page-item active"><a class="page-link">1</a></li>
-                                        <li class="page-item"><a class="page-link">2</a></li>
-                                        <li class="page-item"><a class="page-link">3</a></li>
-                                        <li class="page-item next-page"><a aria-label="Next" class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true" class="fa fa-angle-right"></i></span></a>
-                                        </li>
-                                    </ul>
+                            </div>
+                        </b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col xl="6" lg="6" md="12" sm="12">
+                            <div class="card spur-card">
+                                <div class="card-header">
+                                    <div class="spur-card-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="spur-card-title"> Mail configuration</div>
+                                </div>
+                                <div class="card-body ">
+                                    <b-alert
+                                            :show="dismissCountDown"
+                                            dismissible
+                                            fade
+                                            variant="success"
+                                            @dismiss-count-down="countDownChanged"
+                                    >
+                                        {{warningMessage}}
+                                    </b-alert>
+                                    <b-alert
+                                            :show="dismissCountDown"
+                                            dismissible
+                                            fade
+                                            variant="success"
+                                            @dismiss-count-down="countDownChanged"
+                                    >
+                                        {{warningMessage}}
+                                    </b-alert>
+                                    <b-form-group
+                                            label-cols-sm="4"
+                                            label-cols-lg="3"
+                                            label="email.user"
+                                    >
+                                        <b-form-input placeholder="e.g: abc@163.com" v-model="email.user"></b-form-input>
+                                    </b-form-group>
+                                    <b-form-group
+                                            label-cols-sm="4"
+                                            label-cols-lg="3"
+                                            label="email.pass"
+                                    >
+                                        <b-form-input placeholder="e.g: abcIsMyPassword" v-model="email.password"></b-form-input>
+                                    </b-form-group>
+                                    <b-form-group
+                                            label-cols-sm="4"
+                                            label-cols-lg="3"
+                                            label="email.host"
+                                    >
+                                        <b-form-input placeholder="e.g: smtp.163.com:25" v-model="email.host"></b-form-input>
+                                    </b-form-group>
+                                    <b-form-group
+                                            label-cols-sm="4"
+                                            label-cols-lg="3"
+                                            label="email.recv"
+                                    >
+                                        <b-form-input placeholder="e.g: zhangsan@163.com" v-model="email.recv"></b-form-input>
+                                    </b-form-group>
+
+                                    <b-button variant="primary" @click="setEmail">Submit</b-button>
                                 </div>
                             </div>
                         </b-col>
@@ -137,111 +146,100 @@
 </template>
 
 <script>
-    import FileTools from "@/functions/FileTools";
-
     export default {
         name: 'admin',
         data() {
             return {
-                path_items: [
-                    {
-                        text: 'All File',
-                        href: '#'
-                    },
-                    {
-                        text: 'Manage',
-                        href: '#'
-                    },
-                    {
-                        text: 'Library',
-                        active: true
-                    }
-                ],
-                items: [
-                    {filename: 'Typora', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Music', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Video', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Game', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Typora.zip', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.jpeg', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.mp3', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.mp4', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.html', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.css', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.js', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.exe', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.doc', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.blc', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                ],
-                fields: [
-                    {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size'},
-                    {key: 'utime', label: 'Update Time', class: 'text-center'},
-                    {key: 'actions', label: 'Actions'},
-                ],
-                totalRows: 1,
-                currentPage: 1,
-                perPage: 5,
-                pageOptions: [5, 10, 15],
-                sortBy: '',
-                sortDesc: false,
-                sortDirection: 'asc',
-                filter: null,
-                filterOn: [],
-                infoModal: {
-                    id: 'info-modal',
-                    title: '',
-                    content: ''
-                }
+                upload_record: [],
+                upload_total: {},
+                email: {},
+                dismissSecs: 3,
+                dismissCountDown: 0,
+                showDismissibleAlert: false,
+                warningMessage: '',
+                isRegister: false,
             }
         },
         methods: {
-            isHovered(item, index, event) {
-                //todo
-
-            },
-            iconType(filename) {
-                var result = FileTools.matchType(filename);
-                if (result === 'image') {
-                    //图片后缀
-                    return {
-                        fas: true,
-                        'fas fa-file-image':true
-                    }
-                } else if (result === 'radio') {
-                    return {
-                        fas: true,
-                        'fas fa-file-audio': true
-                    }
-                } else if (result === 'archive') {
-                    return {
-                        fas: true,
-                        'fa-file-archive': true
-                    }
-                } else if (result === 'video') {
-                    return {
-                        fas: true,
-                        'fas fa-file-video': true
-                    }
-                } else if (result === 'document') {
-                    return {
-                        fas: true,
-                        'fas fa-file-word': true
-                    }
-                }else if (result === 'code') {
-                    return {
-                        fas: true,
-                        'fas fa-file-code': true
-                    }
-                } else {
-                    //没有后缀或者没有匹配到相关后缀 返回一个未知类型
-                    return {
-                        fas: true,
-                        'fas fa-question': true
-                    }
+            calc(size) {
+                //此时的size为字节
+                //将字节转为 KB
+                let kb = Math.ceil(size / 1024);
+                if (kb < 1024) {
+                    return kb + ' KB'
                 }
+                let mb = Math.ceil(kb / 1024);
+                if (mb < 1024) {
+                    return mb + 'MB'
+                }
+                let gb = Math.ceil(mb / 1024);
+                if (gb < 1024) {
+                    return gb + 'GB'
+                }
+                let tb = Math.ceil(gb / 1024);
+                if (tb < 1024) {
+                    return tb + 'TB'
+                }
+                return Math.ceil(tb / 1024) + 'PB'
+            },
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown;
+            },
+            repair_sync(){
+                this.$ajax.get(this.storage+"/group1/repair?force=1").then(response => {
+                    this.dismissCountDown = this.dismissSecs;
+                    this.warningMessage = response.data.message;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            },
+            async setEmail() {
+                let cfg = {};
+                await this.$ajax.get(this.storage + "/group1/reload?action=get")
+                    .then(response => {
+                        cfg = response.data.data;
+                    })
+                    .catch(error => {
+                        console.log(error.response);
+                    });
+                cfg.mail = this.email;
+                cfg.alarm_receivers = [this.email.recv];
+                let param = JSON.stringify(cfg);
+                this.$ajax.get(this.storage + "/group1/reload?action=set&cfg="+param)
+                    .then(response => {
+                        this.dismissCountDown = this.dismissSecs;
+                        this.warningMessage = "ok";
+                    })
+                    .catch(error => {
+                        console.log(error.response);
+                    })
             }
         },
+        async created() {
+            //获取集群信息
+            this.$ajax.get(this.storage + "/group1/stat")
+                .then(response => {
+                    this.upload_record.push.apply(this.upload_record, response.data.data);
+                    this.upload_record.splice(this.upload_record.length - 1, 1);
+                    this.upload_record = this.upload_record.slice(-5);
+                    this.upload_total = response.data.data[response.data.data.length - 1];
+                })
+                .catch(error => {
+                    console.log(error.response);
+                    console.log("集群已下线");
+                });
+
+            //获取集群配置信息
+            await this.$ajax.get(this.storage + "/group1/reload?action=get")
+                .then(response => {
+                    this.email = response.data.data.mail;
+                    this.email.recv = response.data.data.alarm_receivers[0];
+                })
+                .catch(error => {
+                    console.log(error.response);
+                });
+        }
     }
 </script>
 
@@ -294,13 +292,13 @@
     }
 
     .breadcrumb {
-        background-color: rgba(0,0,0,0);
+        background-color: rgba(0, 0, 0, 0);
         margin-bottom: 0;
     }
 
     .avatar {
         color: #fff;
-        background-color: rgba(0,0,0,0);
+        background-color: rgba(0, 0, 0, 0);
         display: inline-flex;
         -webkit-box-align: center;
         -ms-flex-align: center;
@@ -313,8 +311,9 @@
         height: 48px;
         width: 48px;
     }
+
     .rounded-circle {
-        border-radius: 50%!important;
+        border-radius: 50% !important;
     }
 
     .path-style {
@@ -342,6 +341,7 @@
         thead {
             background-color: #f6f9fc;
             color: #8898aa;
+
             tr {
                 th {
                     padding-left: 1.5rem;
@@ -349,6 +349,7 @@
                 }
             }
         }
+
         tbody tr td {
             padding-left: 1.4rem;
         }
@@ -361,5 +362,17 @@
         .fas {
             padding-right: 5px;
         }
+    }
+
+    .notification-date {
+        text-align: left;
+    }
+
+    .notification-count {
+        text-align: center;
+    }
+
+    .notification-size {
+        text-align: right;
     }
 </style>

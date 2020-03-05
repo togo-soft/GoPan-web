@@ -85,7 +85,7 @@ const routes = [
         path: '/admin',
         name: 'admin',
         redirect: '/admin/dashboard',
-        component: () => import('../layouts/Dashboard.vue'),
+        component: () => import('../layouts/Admin.vue'),
         children: [
             {
                 path: 'dashboard',
@@ -118,6 +118,16 @@ const routes = [
         path: '/error',
         name: 'error',
         component: () => import('../views/Error.vue')
+    },
+    {
+        name: 'share-list',
+        path: '/share/:key',
+        component: () => import('../views/Share')
+    },
+    {
+        name: 'admin-auth',
+        path: '/admin/auth',
+        component: () => import('../views/admin/Auth.vue')
     }
 ];
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="home">
+    <div class="home w-100 h-100">
         <header>
             <b-container fluid>
                 <b-row>
@@ -7,18 +7,20 @@
                         <b-img src="img/logo.png" fluid alt="logo"></b-img>
                         <div class="intro-text">
                             <span class="subtitle">Cloud Disk</span>
-                            <span class="describe"
-                            >Sharing square, where you can find some interesting things
-                shared by others.</span
-                            >
+                            <span class="describe">Gopan is a campus network disk system based on Go + Vue.</span>
                         </div>
                     </b-col>
-                    <b-col lg="12" class="own-btn">
+                    <b-col v-if="!isLogin" lg="12" class="own-btn">
                         <router-link :to="{name:'login'}" class="btn btn-lg btn-outline">
                             Sign in
                         </router-link>
                         <router-link :to="{name:'register'}" class="btn btn-lg btn-outline">
                             Sign up
+                        </router-link>
+                    </b-col>
+                    <b-col v-else lg="12" class="own-btn">
+                        <router-link :to="{name:'dashboard'}" class="btn btn-lg btn-outline">
+                            Dashboard
                         </router-link>
                     </b-col>
                 </b-row>
@@ -29,127 +31,136 @@
                 <div class="col-xs-12"></div>
             </div>
         </div>
-        <main class="mb-4">
+        <main class="mb-4 main-container">
             <b-container>
                 <h2 class="text-center">
-                    Latest Shared
+                    Search for shared files
                 </h2>
-                <div class="list-group">
-                    <a href="/vue/xxx" class="list-group-item" target="_blank">
-                        <b-row>
-                            <b-col md="3">
-                                <h4 class="file-author">vue</h4>
-                            </b-col>
-                            <b-col md="9">
-                                <p class="file-description">
-                                    游戏大全、音乐大全、视频大全
-                                </p>
-                            </b-col>
-                            <b-col md="9" offset-md="3">
-                <span class="package-extra-info"
-                ><i class="fas fa-star"></i> 153551</span
-                >
-                            </b-col>
-                        </b-row>
-                    </a>
-                    <a href="/vue/xxx" class="list-group-item" target="_blank">
-                        <b-row>
-                            <b-col md="3">
-                                <h4 class="file-author">vue</h4>
-                            </b-col>
-                            <b-col md="9">
-                                <p class="file-description">
-                                    YII视频教程-全集
-                                </p>
-                            </b-col>
-                            <b-col md="9" offset-md="3">
-                <span class="package-extra-info"
-                ><i class="fas fa-star"></i> 153551</span
-                >
-                            </b-col>
-                        </b-row>
-                    </a>
-                    <a href="/vue/xxx" class="list-group-item" target="_blank">
-                        <b-row>
-                            <b-col md="3">
-                                <h4 class="file-author">vue</h4>
-                            </b-col>
-                            <b-col md="9">
-                                <p class="file-description">
-                                    Golang教程-视频教程-某某某培训机构
-                                </p>
-                            </b-col>
-                            <b-col md="9" offset-md="3">
-                <span class="package-extra-info"
-                ><i class="fas fa-star"></i> 153551</span
-                >
-                            </b-col>
-                        </b-row>
-                    </a>
-                    <a href="/vue/xxx" class="list-group-item" target="_blank">
-                        <b-row>
-                            <b-col md="3">
-                                <h4 class="file-author">vue</h4>
-                            </b-col>
-                            <b-col md="9">
-                                <p class="file-description">
-                                    Vue
-                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue
-                                    被设计为可以自底向上逐层应用。Vue
-                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。
-                                </p>
-                            </b-col>
-                            <b-col md="9" offset-md="3">
-                <span class="package-extra-info"
-                ><i class="fas fa-star"></i> 153551</span
-                >
-                            </b-col>
-                        </b-row>
-                    </a>
-                    <a href="/vue/xxx" class="list-group-item" target="_blank">
-                        <b-row>
-                            <b-col md="3">
-                                <h4 class="file-author">vue</h4>
-                            </b-col>
-                            <b-col md="9">
-                                <p class="file-description">
-                                    Vue
-                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue
-                                    被设计为可以自底向上逐层应用。Vue
-                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。
-                                </p>
-                            </b-col>
-                            <b-col md="9" offset-md="3">
-                <span class="package-extra-info"
-                ><i class="fas fa-star"></i> 153551</span
-                >
-                            </b-col>
-                        </b-row>
-                    </a>
-                    <a href="/vue/xxx" class="list-group-item" target="_blank">
-                        <b-row>
-                            <b-col md="3">
-                                <h4 class="file-author">vue</h4>
-                            </b-col>
-                            <b-col md="9">
-                                <p class="file-description">
-                                    Vue
-                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue
-                                    被设计为可以自底向上逐层应用。Vue
-                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。
-                                </p>
-                            </b-col>
-                            <b-col md="9" offset-md="3">
-                <span class="package-extra-info"
-                ><i class="fas fa-star"></i> 153551</span
-                >
-                            </b-col>
-                        </b-row>
-                    </a>
-                    <a class="list-group-item text-center file-more">
-                        查看更多分享
-                    </a>
+                <b-row>
+                    <b-col xl="6" lg="6" md="12" sm="12" offset-xl="3" offset-lg="3">
+                        <b-form-input v-model="fsk" placeholder="Enter file sign"></b-form-input>
+                    </b-col>
+                </b-row>
+                <div class="text-center mt-3">
+                    <b-button variant="primary" @click="find">find</b-button>
                 </div>
+
+<!--                <div class="list-group">-->
+<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
+<!--                        <b-row>-->
+<!--                            <b-col md="3">-->
+<!--                                <h4 class="file-author">vue</h4>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9">-->
+<!--                                <p class="file-description">-->
+<!--                                    游戏大全、音乐大全、视频大全-->
+<!--                                </p>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9" offset-md="3">-->
+<!--                <span class="package-extra-info"-->
+<!--                ><i class="fas fa-star"></i> 153551</span-->
+<!--                >-->
+<!--                            </b-col>-->
+<!--                        </b-row>-->
+<!--                    </a>-->
+<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
+<!--                        <b-row>-->
+<!--                            <b-col md="3">-->
+<!--                                <h4 class="file-author">vue</h4>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9">-->
+<!--                                <p class="file-description">-->
+<!--                                    YII视频教程-全集-->
+<!--                                </p>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9" offset-md="3">-->
+<!--                <span class="package-extra-info"-->
+<!--                ><i class="fas fa-star"></i> 153551</span-->
+<!--                >-->
+<!--                            </b-col>-->
+<!--                        </b-row>-->
+<!--                    </a>-->
+<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
+<!--                        <b-row>-->
+<!--                            <b-col md="3">-->
+<!--                                <h4 class="file-author">vue</h4>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9">-->
+<!--                                <p class="file-description">-->
+<!--                                    Golang教程-视频教程-某某某培训机构-->
+<!--                                </p>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9" offset-md="3">-->
+<!--                <span class="package-extra-info"-->
+<!--                ><i class="fas fa-star"></i> 153551</span-->
+<!--                >-->
+<!--                            </b-col>-->
+<!--                        </b-row>-->
+<!--                    </a>-->
+<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
+<!--                        <b-row>-->
+<!--                            <b-col md="3">-->
+<!--                                <h4 class="file-author">vue</h4>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9">-->
+<!--                                <p class="file-description">-->
+<!--                                    Vue-->
+<!--                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue-->
+<!--                                    被设计为可以自底向上逐层应用。Vue-->
+<!--                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。-->
+<!--                                </p>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9" offset-md="3">-->
+<!--                <span class="package-extra-info"-->
+<!--                ><i class="fas fa-star"></i> 153551</span-->
+<!--                >-->
+<!--                            </b-col>-->
+<!--                        </b-row>-->
+<!--                    </a>-->
+<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
+<!--                        <b-row>-->
+<!--                            <b-col md="3">-->
+<!--                                <h4 class="file-author">vue</h4>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9">-->
+<!--                                <p class="file-description">-->
+<!--                                    Vue-->
+<!--                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue-->
+<!--                                    被设计为可以自底向上逐层应用。Vue-->
+<!--                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。-->
+<!--                                </p>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9" offset-md="3">-->
+<!--                <span class="package-extra-info"-->
+<!--                ><i class="fas fa-star"></i> 153551</span-->
+<!--                >-->
+<!--                            </b-col>-->
+<!--                        </b-row>-->
+<!--                    </a>-->
+<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
+<!--                        <b-row>-->
+<!--                            <b-col md="3">-->
+<!--                                <h4 class="file-author">vue</h4>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9">-->
+<!--                                <p class="file-description">-->
+<!--                                    Vue-->
+<!--                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue-->
+<!--                                    被设计为可以自底向上逐层应用。Vue-->
+<!--                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。-->
+<!--                                </p>-->
+<!--                            </b-col>-->
+<!--                            <b-col md="9" offset-md="3">-->
+<!--                <span class="package-extra-info"-->
+<!--                ><i class="fas fa-star"></i> 153551</span-->
+<!--                >-->
+<!--                            </b-col>-->
+<!--                        </b-row>-->
+<!--                    </a>-->
+<!--                    <a class="list-group-item text-center file-more">-->
+<!--                        查看更多分享-->
+<!--                    </a>-->
+<!--                </div>-->
             </b-container>
         </main>
         <footer class="bg-light-grey">
@@ -204,15 +215,28 @@
         name: "home",
         data() {
             return {
+                isLogin: false,
                 year: new Date().getFullYear(),
                 mainProps: {
                     black: true,
                     width: 50,
                     height: 50,
-                }
+                },
+                fsk: ''
             };
         },
-        components: {}
+        methods: {
+            find() {
+                this.$router.push({
+                    path: this.redirect || "/share/"+this.fsk
+                });
+            }
+        },
+        created() {
+            if (sessionStorage.getItem("_login") !== null || localStorage.getItem("_login") !== null) {
+                this.isLogin = true;
+            }
+        }
     };
 </script>
 
@@ -220,6 +244,9 @@
     body {
         font-size: 10px;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
     }
 
     header {

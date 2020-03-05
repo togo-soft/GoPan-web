@@ -1,11 +1,6 @@
 <template>
     <div class="dash">
-        <div v-if="userType === 'admin'">
-            <dash-admin-nav></dash-admin-nav>
-        </div>
-        <div v-else>
-            <dash-nav></dash-nav>
-        </div>
+        <dash-nav></dash-nav>
         <div class="dash-app">
             <dash-header></dash-header>
             <router-view></router-view>
@@ -16,19 +11,16 @@
 <script>
     import 'bootstrap/dist/js/bootstrap.min.js'
     import DashNav from "@/components/DashNav";
-    import DashAdminNav from "@/components/DashAdminNav";
     import DashHeader from "@/components/DashHeader";
 
     export default {
         name: "dashboard",
         data() {
             return {
-                userType: '',
             };
         },
         components: {
             DashNav,
-            DashAdminNav,
             DashHeader
         },
         created() {

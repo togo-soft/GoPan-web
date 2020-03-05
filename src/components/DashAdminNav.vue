@@ -16,8 +16,8 @@
                 <i class="fas fa-users-cog"></i> RoleManager </router-link>
             <router-link :to="{name:'admin-cluster'}" class="dash-nav-item">
                 <i class="fas fa-cloud"></i> ClusterManager </router-link>
-            <router-link :to="{name:'admin-app'}" class="dash-nav-item">
-                <i class="fas fa-cogs"></i> AppManager </router-link>
+<!--            <router-link :to="{name:'admin-app'}" class="dash-nav-item">-->
+<!--                <i class="fas fa-cogs"></i> AppManager </router-link>-->
             <div class="dash-nav-dropdown">
                 <a href="#!" class="dash-nav-item dash-nav-dropdown-toggle">
                     <i class="fas fa-paperclip"></i> Link </a>

@@ -17,11 +17,13 @@ import 'bootstrap-vue/dist/bootstrap-vue.min.css'
 import Axios from 'axios';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import VueHighlightJS from 'vue-highlightjs'
+import VueClipboard from 'vue-clipboard2'
 
 // use plugins
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueHighlightJS);
+Vue.use(VueClipboard);
 
 Vue.config.productionTip = false;
 Vue.prototype.$ajax = Axios;
