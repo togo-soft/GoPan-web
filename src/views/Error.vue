@@ -77,6 +77,10 @@
                 this.code = 200;
                 this.message = '好像没有什么错误!'
             }
+            if (this.code === 4901) {
+                sessionStorage.clear();
+                localStorage.clear();
+            }
         }
     }
 </script>

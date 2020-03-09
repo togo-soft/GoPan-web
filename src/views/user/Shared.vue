@@ -20,6 +20,7 @@
                                 </div>
                                 <div class="table-responsive">
                                     <b-table
+                                            id="my-table"
                                             show-empty
                                             small
                                             stacked="md"
@@ -48,7 +49,7 @@
                                             </div>
                                         </template>
 
-                                        <template v-slot:cell(utime)="row">
+                                        <template v-slot:cell(uptime)="row">
                                             <div class="field-style">
                                                 {{ row.value }}
                                             </div>
@@ -68,18 +69,12 @@
                                     </b-table>
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
-                                    <ul class="pagination">
-                                        <li class="page-item prev-page disabled"><a aria-label="Previous"
-                                                                                    class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true"
-                                                                      class="fa fa-angle-left"></i></span></a></li>
-                                        <li class="page-item active"><a class="page-link">1</a></li>
-                                        <li class="page-item"><a class="page-link">2</a></li>
-                                        <li class="page-item"><a class="page-link">3</a></li>
-                                        <li class="page-item next-page"><a aria-label="Next" class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true" class="fa fa-angle-right"></i></span></a>
-                                        </li>
-                                    </ul>
+                                    <b-pagination
+                                            v-model="pagination.currentPage"
+                                            :total-rows="rows"
+                                            :per-page="pagination.perPage"
+                                            aria-controls="my-table"
+                                    ></b-pagination>
                                 </div>
                             </div>
                         </b-col>
@@ -121,9 +116,13 @@
                 items: [],
                 fields: [
                     {key: 'filename', label: 'FileName'},
-                    {key: 'uptime', label: 'Update Time', class: 'text-center'},
+                    {key: 'uptime', label: 'Update Time', class: 'text-center', sortable: true},
                     {key: 'actions', label: 'Actions'},
                 ],
+                pagination: {
+                    perPage: 15,
+                    currentPage: 1,
+                },
                 user: {},// token uid username
                 preview: {
                     fileType: {},
@@ -277,6 +276,11 @@
                     });
             }
         },
+        computed: {
+            rows() {
+                return this.items.length
+            }
+        }
     }
 </script>
 

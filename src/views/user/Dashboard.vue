@@ -13,15 +13,15 @@
                                 <div class="stats-data">
                                     <div class="stats-number">
                                         <span v-b-tooltip.hover title="Used disk size">
-                                            114KB
+                                            {{unitConversion(storage_ratio.used_size)}}
                                         </span>
                                         /
                                         <span v-b-tooltip.hover title="Total disk space">
-                                            5G
+                                            {{unitConversion(storage_ratio.total_size)}}
                                         </span>
                                     </div>
                                     <div class="stats-change">
-                                        <span class="stats-percentage">-25%</span>
+                                        <span class="stats-percentage">-{{((storage_ratio.used_size / storage_ratio.total_size) * 100).toFixed(2)}}%</span>
                                         <span class="stats-timeframe">Used ratio</span>
                                     </div>
                                 </div>
@@ -53,7 +53,8 @@
                                         <h5 class="mb-0 ml-3 mt-2 path-style">
                                             <template>
                                                 <b-breadcrumb>
-                                                    <b-breadcrumb-item v-for="item in path_items" @click="changeDir(item.id)">
+                                                    <b-breadcrumb-item v-for="item in path_items"
+                                                                       @click="changeSuperiorDir(item.id)">
                                                         {{item.text}}
                                                     </b-breadcrumb-item>
                                                 </b-breadcrumb>
@@ -63,6 +64,7 @@
                                 </div>
                                 <div class="table-responsive">
                                     <b-table
+                                            id="my-table"
                                             show-empty
                                             small
                                             stacked="md"
@@ -78,12 +80,13 @@
                                                     <i class="fas fa-folder"></i>
                                                     </span>
                                                     <span class="name mb-0 text-sm">
-                                                        <a href="javascript:void(0)" @click="changeDir(row.item.id)">{{row.value}}</a>
+                                                        <a href="javascript:void(0)" @click="changeDir(row.item.filename,row.item.id)">{{row.value}}</a>
                                                     </span>
                                                 </div>
 
                                                 <div v-else>
-                                                    <span class="avatar rounded-circle" style="font-size: 24px; color: Mediumslateblue;">
+                                                    <span class="avatar rounded-circle"
+                                                          style="font-size: 24px; color: Mediumslateblue;">
                                                         <i :class="iconType(row.value)"></i>
                                                     </span>
                                                     <span class="name mb-0 text-sm">
@@ -99,11 +102,11 @@
                                                 <span v-if="row.item.isDir">
                                                     -
                                                 </span>
-                                                <span v-else-if="row.value < 1000">
-                                                    {{row.value}} KB
+                                                <span v-else-if="row.value < 1024">
+                                                    {{rounding(row.value)}} MB
                                                 </span>
                                                 <span v-else>
-                                                    {{rounding(row.value / 1024)}} MB
+                                                    {{rounding(row.value / 1024)}} GB
                                                 </span>
                                             </div>
                                         </template>
@@ -116,7 +119,7 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style text-primary">
-                                                <a class="share" title="share" @click="shareFile(row.item.id)">
+                                                <a class="share" title="share" @click="shareFile(row.item)">
                                                     <i class="fas fa-share-alt-square"></i>
                                                 </a>
                                                 <a class="edit" title="edit" @click="renameFile(row.item.id)">
@@ -138,20 +141,14 @@
 
                                     </b-table>
                                 </div>
-<!--                                <div class="card-footer d-flex justify-content-end">-->
-<!--                                    <ul class="pagination">-->
-<!--                                        <li class="page-item prev-page disabled"><a aria-label="Previous"-->
-<!--                                                                                    class="page-link"><span-->
-<!--                                                aria-hidden="true"><i aria-hidden="true"-->
-<!--                                                                      class="fa fa-angle-left"></i></span></a></li>-->
-<!--                                        <li class="page-item active"><a class="page-link">1</a></li>-->
-<!--                                        <li class="page-item"><a class="page-link">2</a></li>-->
-<!--                                        <li class="page-item"><a class="page-link">3</a></li>-->
-<!--                                        <li class="page-item next-page"><a aria-label="Next" class="page-link"><span-->
-<!--                                                aria-hidden="true"><i aria-hidden="true" class="fa fa-angle-right"></i></span></a>-->
-<!--                                        </li>-->
-<!--                                    </ul>-->
-<!--                                </div>-->
+                                <div class="card-footer d-flex justify-content-end">
+                                    <b-pagination
+                                            v-model="pagination.currentPage"
+                                            :total-rows="rows"
+                                            :per-page="pagination.perPage"
+                                            aria-controls="my-table"
+                                    ></b-pagination>
+                                </div>
                             </div>
                         </b-col>
                     </b-row>
@@ -198,6 +195,9 @@
         </b-modal>
         <rename :id="file.fid" :user="user"></rename>
         <share :id="file.fid" :user="user"></share>
+        <b-modal id="file-isShare" centered title="Warning" hide-footer hide-header-close>
+            The file has been shared, you don't need to operate any more
+        </b-modal>
         <preview :type="preview.fileType" :source="preview.source"></preview>
         <remove :file="removeFileObject" :user="user"></remove>
     </div>
@@ -236,26 +236,28 @@
                     alertVariant: 'success',//默认消息提示颜色
                     storage_result: {},//上传结果
                 },
+                //用户空间使用率
+                storage_ratio: {},
                 //文件系统路径 每次操作目录都需要刷新该结果集
-                path_items: [
-
-                ],
+                path_items: [],
                 // 某文件夹中的数据列表
                 items: [],
                 fields: [
                     {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size'},
-                    {key: 'uptime', label: 'Update Time', class: 'text-center'},
+                    {key: 'size', label: 'Size', sortable: true},
+                    {key: 'uptime', label: 'Update Time', class: 'text-center', sortable: true},
                     {key: 'actions', label: 'Actions'},
                 ],
+                pagination: {
+                    perPage: 15,
+                    currentPage: 1,
+                },
                 user: {},// token uid username
                 preview: {
                     fileType: {},
                     source: ''
                 },
-                removeFileObject: {
-
-                },
+                removeFileObject: {},
                 now_path_id: '', //当前文件目录下的ID
             }
         },
@@ -267,21 +269,21 @@
                 this.file.current_file = null;
                 this.file.show_progress = false;
             },
-            refresh(){
+            refresh() {
                 let headers = {
                     Authorization: "Bearer " + this.user.token,
                     uid: this.user.uid
                 };
                 //获取当前文件夹文件列表
                 this.$ajax
-                    .get(this.server +"/api/file/list?username="+this.user.username+"&id="+this.now_path_id,{
-                        headers:headers
+                    .get(this.server + "/api/file/list?username=" + this.user.username + "&id=" + this.now_path_id, {
+                        headers: headers
                     })
                     .then(response => {
                         //先清空数组元素
                         this.items.splice(0);
                         //将结果Push到数组
-                        this.items.push.apply(this.items,response.data.data);
+                        this.items.push.apply(this.items, response.data.data);
                     })
                     .catch(error => {
                         if (error.response.status === 400) {
@@ -296,12 +298,12 @@
             async uploadFile() {
                 this.file.show_progress = true;
                 let param = new FormData();
-                param.append('file',this.file.current_file);
-                param.append('scene','default');
-                param.append('output','json');
+                param.append('file', this.file.current_file);
+                param.append('scene', 'default');
+                param.append('output', 'json');
                 // param.append('path',this.user.username);
                 let config = {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                    headers: {'Content-Type': 'multipart/form-data'},
                     onUploadProgress: e => {
                         if (e.lengthComputable) {
                             let rate = this.file.progress_rate = (e.loaded / e.total) * 100; //已经上传的比例
@@ -313,7 +315,7 @@
                 };
                 //开始上传到存储端
                 await this.$ajax
-                    .post(this.storage+"/group1/upload", param,config)
+                    .post(this.storage + "/group1/upload", param, config)
                     .then(response => {
                         this.file.show_upload_result = true;
                         this.file.dismissCountDown = this.file.dismissSecs;
@@ -340,10 +342,13 @@
                     filepath: this.file.storage_result.path,
                 });
                 this.$ajax
-                    .post(this.server +"/api/file/upload?username="+this.user.username, params,{
-                        headers:headers
+                    .post(this.server + "/api/file/upload?username=" + this.user.username, params, {
+                        headers: headers
                     })
                     .then(response => {
+                        this.file.dismissCountDown = 0;
+                        this.file.show_message = '';
+                        this.file.progress_rate = 0;
                         this.refresh();
                         this.$bvModal.hide('upload');
                     })
@@ -351,7 +356,7 @@
                         alert(error.response.message)
                     });
             },
-            storageResult(data){
+            storageResult(data) {
                 this.file.storage_result = data;
             },
             iconType(filename) {
@@ -361,7 +366,7 @@
                     //图片后缀
                     return {
                         fas: true,
-                        'fas fa-file-image':true
+                        'fas fa-file-image': true
                     }
                 } else if (result === 'radio') {
                     return {
@@ -383,22 +388,22 @@
                         fas: true,
                         'fas fa-file-word': true
                     }
-                }else if (result === 'pdf'){
+                } else if (result === 'pdf') {
                     return {
                         fas: true,
                         'fas fa-file-pdf': true
                     }
-                }else if (result === 'ppt'){
+                } else if (result === 'ppt') {
                     return {
                         fas: true,
                         'fas fa-file-powerpoint': true
                     }
-                }else if (result === 'excel'){
+                } else if (result === 'excel') {
                     return {
                         fas: true,
                         'fas fa-file-excel': true
                     }
-                }else if (result === 'code') {
+                } else if (result === 'code') {
                     return {
                         fas: true,
                         'fas fa-file-code': true
@@ -418,7 +423,7 @@
                 //获得文件类型
                 this.preview.fileType = this.fileType(item.filename);
                 //获得文件资源地址
-                this.preview.source = this.storage + item.filepath+"?download=0";
+                this.preview.source = this.storage + item.filepath + "?download=0";
                 //预览Modal开启
                 this.$bvModal.show('file-preview');
             },
@@ -429,11 +434,15 @@
                 this.removeFileObject = item;
                 this.$bvModal.show('file-remove');
             },
-            shareFile(id){
-                this.file.fid = id;
-                this.$bvModal.show('file-share');
+            shareFile(item) {
+                this.file.fid = item.id;
+                if(item.isShare) {
+                    this.$bvModal.show('file-isShare');
+                }else{
+                    this.$bvModal.show('file-share');
+                }
             },
-            createDir(){
+            createDir() {
                 // 创建虚拟文件系统的文件夹
                 var headers = {
                     Authorization: "Bearer " + this.user.token,
@@ -441,8 +450,8 @@
                 };
                 //获取根文件列表
                 this.$ajax
-                    .get(this.server +"/api/file/createdir?username="+this.user.username+"&id="+this.now_path_id+"&dirname="+this.file.directory_name,{
-                        headers:headers
+                    .get(this.server + "/api/file/createdir?username=" + this.user.username + "&id=" + this.now_path_id + "&dirname=" + this.file.directory_name, {
+                        headers: headers
                     })
                     .then(response => {
                         //获取当前目录ID
@@ -457,24 +466,31 @@
                         this.file.show_message = '创建失败!';
                     });
             },
-            renameFile(id){
+            renameFile(id) {
                 this.file.fid = id;
                 this.$bvModal.show('file-rename');
             },
-            changeDir(id){
+            changeDir(dirname,id) {
                 //改变当前主目录ID 再调用刷新即可
                 this.now_path_id = id;
-                console.log(id);
+                this.path_items.push({text: dirname, id: id});
                 this.refresh();
             },
-            getToken(){
+            changeSuperiorDir(id){
+                //面包屑里的返回上级目录
+                const index = this.path_items.findIndex(item=> item.id === id);
+                this.path_items.splice(index+1,this.path_items.length-1);
+                this.now_path_id = id;
+                this.refresh();
+            },
+            getToken() {
                 //获取token 若不存在 则跳转到登录页面 若存在 则拉取页面数据 中间过程中进行鉴权
-                if(localStorage.getItem("_type") === "localStorage") {
+                if (localStorage.getItem("_type") === "localStorage") {
                     //token在localStorage 上
                     this.user.token = localStorage.getItem("_token");
                     this.user.uid = localStorage.getItem("_uid");
                     this.user.username = localStorage.getItem("_username");
-                }else{
+                } else {
                     //token在sessionStorage中
                     this.user.token = sessionStorage.getItem("_token");
                     this.user.uid = sessionStorage.getItem("_uid");
@@ -482,39 +498,98 @@
                 }
                 return !(this.user.token === null || this.user.uid === null);
             },
-            getNowPathID(id){
+            getNowPathID(id) {
                 this.now_path_id = id;
-                this.path_items.push({text: 'All File',id: id})
+                this.path_items.push({text: 'All File', id: id})
             },
-            rounding(number){
+            rounding(number) {
                 return Math.round(number);
             },
-        },
-        created() {
-            if(!this.getToken()) {
-                //没有token相关信息 页面重定向
-                return;
-            }else{
-                // 登录成功 获取文件根目录
-                var headers = {
+            getRoot() {
+                let headers = {
                     Authorization: "Bearer " + this.user.token,
                     uid: this.user.uid
                 };
                 //获取根文件列表
                 this.$ajax
-                    .get(this.server +"/api/file/root?username="+this.user.username,{
-                        headers:headers
+                    .get(this.server + "/api/file/root?username=" + this.user.username, {
+                        headers: headers
                     })
                     .then(response => {
                         //获取当前目录ID
                         this.getNowPathID(response.data.message);
-                        this.items.push.apply(this.items,response.data.data);
+                        this.items.push.apply(this.items, response.data.data);
                     })
                     .catch(error => {
                         //获取根目录失败
+                        if(error.response.data.code === 4901) {
+                            this.$router.push({
+                                name: 'error',
+                                params: {
+                                    code: 4901,
+                                    message: 'token认证失败!请重新登录',
+                                }
+                            });
+                        }
                     });
+            },
+            getRatio() {
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                //获取用户空间使用率
+                this.$ajax
+                    .get(this.server + "/api/file/ratio?username=" + this.user.username, {
+                        headers: headers
+                    })
+                    .then(response => {
+                        this.storage_ratio = response.data.data;
+                    })
+                    .catch(error => {
+                        //获取根目录失败
+                        console.log(error.response);
+                        if(error.response.data.code === 4901) {
+                            this.$router.push({
+                                name: 'error',
+                                params: {
+                                    code: 4901,
+                                    message: 'token认证失败!请重新登录',
+                                }
+                            });
+                        }
+                    });
+            },
+            unitConversion(size) {
+                //单位换算
+                if (size < 1024) {
+                    return size.toFixed(2) + 'M'
+                }
+                return (size / 1024) + 'G'
+            },
+        },
+        created() {
+            if (!this.getToken()) {
+                //没有token相关信息 页面重定向
+                this.$router.push({
+                    name: 'error',
+                    params: {
+                        code: 400,
+                        message: 'token认证失败!请重新登录',
+                    }
+                });
+            } else {
+                // 登录成功 获取文件根目录
+                this.getRoot();
+                //获取用户空间使用率
+                this.getRatio();
             }
         },
+        computed: {
+            rows() {
+                return this.items.length
+            }
+        }
     }
 </script>
 
@@ -546,18 +621,18 @@
         background-color: #fff;
     }
 
-    .btn-primary,.btn-danger {
+    .btn-primary, .btn-danger {
         border-radius: 5px !important;
     }
 
     .breadcrumb {
-        background-color: rgba(0,0,0,0) !important;
+        background-color: rgba(0, 0, 0, 0) !important;
         margin-bottom: 0 !important;
     }
 
     .avatar {
         color: #fff;
-        background-color: rgba(0,0,0,0);
+        background-color: rgba(0, 0, 0, 0);
         display: inline-flex;
         -webkit-box-align: center;
         -ms-flex-align: center;
@@ -570,8 +645,9 @@
         height: 48px;
         width: 48px;
     }
+
     .rounded-circle {
-        border-radius: 50%!important;
+        border-radius: 50% !important;
     }
 
     .path-style {
@@ -599,6 +675,7 @@
         thead {
             background-color: #f6f9fc;
             color: #8898aa;
+
             tr {
                 th {
                     padding-left: 1.5rem;
@@ -606,6 +683,7 @@
                 }
             }
         }
+
         tbody tr td {
             padding-left: 1.4rem;
         }

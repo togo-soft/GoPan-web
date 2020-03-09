@@ -14,7 +14,7 @@
                                             </b-button>
                                         </div>
                                         <div class="col text-right">
-                                            <b-button type="button" variant="primary">
+                                            <b-button type="button" variant="primary" @click="refresh">
                                                 <i class="fas fa-sync-alt"></i> Refresh
                                             </b-button>
                                         </div>
@@ -22,12 +22,15 @@
                                 </div>
                                 <div class="table-responsive">
                                     <b-table
+                                            id="my-table"
                                             show-empty
                                             small
                                             stacked="md"
                                             :items="items"
                                             :fields="fields"
                                             table-class="table-style"
+                                            :per-page="pagination.perPage"
+                                            :current-page="pagination.currentPage"
                                     >
                                         <template v-slot:cell(filename)="row">
                                             <div class="media align-items-center first-field-style">
@@ -47,11 +50,11 @@
 
                                         <template v-slot:cell(size)="row">
                                             <div class="field-style">
-                                                <span v-if="row.value < 1000">
-                                                    {{row.value}} KB
+                                                <span v-if="row.value < 1024">
+                                                    {{row.value}} MB
                                                 </span>
                                                 <span v-else>
-                                                    {{rounding(row.value / 1024)}} MB
+                                                    {{rounding(row.value / 1024)}} GB
                                                 </span>
                                             </div>
                                         </template>
@@ -64,14 +67,14 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="edit" href="javascript:void(0)" title="edit">
+                                                <a class="edit" href="javascript:void(0)" title="edit" @click="renameFile(row.item)">
                                                     <i class="fas fa-pen-square"></i>
                                                 </a>
                                                 <a class="download" href="javascript:void(0)" title="download"
                                                    @click="downloadFile(row.item)">
                                                     <i class="fas fa-arrow-circle-down"></i>
                                                 </a>
-                                                <a class="remove" href="javascript:void(0)" title="Remove">
+                                                <a class="remove" href="javascript:void(0)" title="Remove" @click="deleteFile(row.item)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </div>
@@ -80,18 +83,12 @@
                                     </b-table>
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
-                                    <ul class="pagination">
-                                        <li class="page-item prev-page disabled"><a aria-label="Previous"
-                                                                                    class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true"
-                                                                      class="fa fa-angle-left"></i></span></a></li>
-                                        <li class="page-item active"><a class="page-link">1</a></li>
-                                        <li class="page-item"><a class="page-link">2</a></li>
-                                        <li class="page-item"><a class="page-link">3</a></li>
-                                        <li class="page-item next-page"><a aria-label="Next" class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true" class="fa fa-angle-right"></i></span></a>
-                                        </li>
-                                    </ul>
+                                    <b-pagination
+                                            v-model="pagination.currentPage"
+                                            :total-rows="rows"
+                                            :per-page="pagination.perPage"
+                                            aria-controls="my-table"
+                                    ></b-pagination>
                                 </div>
                             </div>
                         </b-col>
@@ -120,6 +117,21 @@
                 </b-alert>
             </div>
         </b-modal>
+        <b-modal id="secret-file-remove" hide-footer centered>
+            <template v-slot:modal-title>
+                Confirm <code>delete</code> ?
+            </template>
+            <div class="d-block text-center">
+                <h3>After confirming the deletion, the file will be unrecoverable. Are you sure?</h3>
+            </div>
+            <b-button class="mt-3" block @click="realDeleteFile" variant="danger">I'm sure!</b-button>
+        </b-modal>
+        <b-modal id="secret-file-rename" centered title="Rename" hide-footer hide-header-close>
+            <b-form-input v-model="rename_file" placeholder="Enter Directory Name"></b-form-input>
+            <div class="mt-2"></div>
+            <b-button @click="realRenameFile" class="mr-2" variant="primary">Submit</b-button>
+            <b-button @click="rename_file = ''" variant="danger">Reset</b-button>
+        </b-modal>
     </b-container>
 </template>
 
@@ -147,6 +159,11 @@
                     iv: '',
                     ak: ''
                 },
+                //分页相关
+                pagination: {
+                    perPage: 15,
+                    currentPage: 1,
+                },
                 //当前用户登录信息
                 user: {},
                 //文件信息
@@ -154,14 +171,16 @@
                     filename: '',
                     mime: ''
                 },
+                rename_file: '',
+                operate_file: {},
                 //上传存储层的结果
                 storage_result: {},
                 pid: '',//加密目录的ID 加密文件全记录在此
                 items: [],
                 fields: [
                     {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size'},
-                    {key: 'uptime', label: 'Update Time', class: 'text-center'},
+                    {key: 'size', label: 'Size', sortable: true},
+                    {key: 'uptime', label: 'Update Time', class: 'text-center', sortable: true},
                     {key: 'actions', label: 'Actions'},
                 ],
             }
@@ -389,7 +408,74 @@
                     window.URL.revokeObjectURL(url);
                 };
                 reader.readAsDataURL(this.current_file);
-            }
+            },
+            refresh() {
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                //获取根文件列表
+                this.$ajax
+                    .get(this.server + "/api/file/secret/list?username=" + this.user.username, {
+                        headers: headers
+                    })
+                    .then(response => {
+                        //获取当前目录ID
+                        this.pid = response.data.message;
+                        this.items.splice(0);
+                        this.items.push.apply(this.items, response.data.data);
+                    })
+                    .catch(error => {
+                        //获取根目录失败
+                    });
+            },
+            deleteFile(item){
+                this.operate_file = item;
+                this.$bvModal.show('secret-file-remove');
+            },
+            realDeleteFile(){
+                this.$ajax
+                    .get(this.storage + '/group1/delete?md5=' + this.operate_file.hashcode).then(response => {
+                    console.log(response);
+                });
+                // 删除存储在服务端数据库的数据
+                var headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                this.$ajax.get(this.server + '/api/file/delete?username=' + this.user.username + '&id=' + this.operate_file.id, {
+                    headers: headers
+                }).then(response => {
+                    console.log(response.data);
+                    this.$bvModal.hide('secret-file-remove');
+                });
+            },
+            renameFile(item){
+                this.operate_file = item;
+                this.$bvModal.show('secret-file-rename');
+            },
+            realRenameFile(){
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                //获取根文件列表
+                this.$ajax
+                    .get(this.server +"/api/file/rename?username="+this.user.username+"&id="+this.operate_file.id+"&dirname="+this.rename_file,{
+                        headers:headers
+                    })
+                    .then(response => {
+                        // 修改成功
+                        console.log(response.data);
+                        this.$bvModal.hide('secret-file-rename');
+                    })
+                    .catch(error => {
+                        //失败
+                        this.file.show_upload_result = true;
+                        this.file.dismissCountDown = this.file.dismissSecs;
+                        this.file.show_message = '修改失败!';
+                    });
+            },
         },
         created() {
             if (!this.getToken()) {
@@ -397,7 +483,7 @@
                 return;
             } else {
                 // 登录成功 获取文件根目录
-                var headers = {
+                let headers = {
                     Authorization: "Bearer " + this.user.token,
                     uid: this.user.uid
                 };
@@ -423,6 +509,11 @@
                 this.secret.fk = sessionStorage.getItem('_fk');
                 this.secret.iv = sessionStorage.getItem('_iv');
                 this.secret.ak = sessionStorage.getItem('_ak');
+            }
+        },
+        computed: {
+            rows() {
+                return this.items.length
             }
         }
     }
