@@ -29,6 +29,10 @@
         },
         methods: {
             remove() {
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
                 if (!this.file.isDir) {
                     // 删除存储层的文件
                     this.$ajax
@@ -36,17 +40,22 @@
                         console.log(response);
                     });
                     // 删除存储在服务端数据库的数据
-                    var headers = {
-                        Authorization: "Bearer " + this.user.token,
-                        uid: this.user.uid
-                    };
                     this.$ajax.get(this.server + '/api/file/delete?username=' + this.user.username + '&id=' + this.file.id, {
                         headers: headers
                     }).then(response => {
                         console.log(response.data);
+                        this.$emit('remove2Refresh');
                     });
                 } else {
                     //删除文件夹
+                    this.$ajax.get(this.server + '/api/file/delete/dir?username=' + this.user.username + '&id=' + this.file.id, {
+                        headers: headers
+                    }).then(response => {
+                        console.log(response.data);
+                        this.$emit('remove2Refresh');
+                    }).catch(error => {
+                        console.log(error.response);
+                    });
                 }
                 this.$bvModal.hide('file-remove');
             },

@@ -199,7 +199,7 @@
             The file has been shared, you don't need to operate any more
         </b-modal>
         <preview :type="preview.fileType" :source="preview.source"></preview>
-        <remove :file="removeFileObject" :user="user"></remove>
+        <remove :file="removeFileObject" :user="user" @remove2Refresh="refresh"></remove>
     </div>
 </template>
 

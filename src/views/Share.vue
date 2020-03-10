@@ -4,9 +4,14 @@
             <h5 class="my-0 mr-md-auto font-weight-normal">GoPan</h5>
             <nav class="my-2 my-md-0 mr-md-3">
                 <a class="p-2 text-dark" href="/">Home</a>
-                <a class="p-2 text-dark" href="#">Sign In</a>
+                <span v-if="isLogin">
+                    <router-link :to="{name:'dashboard'}" class="btn btn-outline-primary">Dashboard</router-link>
+                </span>
+                <span v-else>
+                    <a class="p-2 text-dark" href="#">Sign In</a>
+                    <a class="btn btn-outline-primary" href="#">Sign up</a>
+                </span>
             </nav>
-            <a class="btn btn-outline-primary" href="#">Sign up</a>
         </div>
 
         <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
@@ -21,7 +26,21 @@
                         <div class="card shadow">
                             <div class="card-header border-0">
                                 <div class="row align-items-center">
-                                    {{filename}}
+                                    <div class="col">
+                                        <h3>{{filename}}</h3>
+                                    </div>
+                                </div>
+                                <div v-if="path_items.length >= 1" class="row align-items-center">
+                                    <h5 class="mb-0 path-style">
+                                        <template>
+                                            <b-breadcrumb>
+                                                <b-breadcrumb-item v-for="item in path_items"
+                                                                   @click="changeSuperiorDir(item.key)">
+                                                    {{item.text}}
+                                                </b-breadcrumb-item>
+                                            </b-breadcrumb>
+                                        </template>
+                                    </h5>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -41,7 +60,7 @@
                                                     <i class="fas fa-folder"></i>
                                                     </span>
                                                 <span class="name mb-0 text-sm">
-                                                        <a href="javascript:void(0)" @click="changeDir(row.item.id)">{{row.value}}</a>
+                                                        <a href="javascript:void(0)" @click="changeDir(row.value,row.item.fsk)">{{row.value}}</a>
                                                     </span>
                                             </div>
 
@@ -60,10 +79,10 @@
                                     <template v-slot:cell(size)="row">
                                         <div class="field-style">
                                                 <span v-if="row.value < 1000">
-                                                    {{row.value}} KB
+                                                    {{row.value}} MB
                                                 </span>
                                             <span v-else>
-                                                    {{rounding(row.value / 1024)}} MB
+                                                    {{rounding(row.value / 1024)}} GB
                                                 </span>
                                         </div>
                                     </template>
@@ -101,6 +120,8 @@
         name: 'share',
         data(){
             return {
+                isLogin: false,
+                path_items: [],
                 items: [],
                 fields: [
                     {key: 'filename', label: 'FileName'},
@@ -108,7 +129,8 @@
                     {key: 'uptime', label: 'Update Time', class: 'text-center'},
                     {key: 'actions', label: 'Actions'},
                 ],
-                filename: ''
+                filename: '',//根文件夹的名称 标识当前分享的名称
+                now_path_key: '', //当前文件目录下的fsk
             }
         },
         methods: {
@@ -172,8 +194,43 @@
             downloadFile(item) {
                 return this.storage + item.filepath;
             },
+            changeSuperiorDir(key){
+                //面包屑里的返回上级目录
+                const index = this.path_items.findIndex(item=> item.key === key);
+                this.path_items.splice(index+1,this.path_items.length-1);
+                this.now_path_key = key;
+                this.refresh();
+            },
+            changeDir(dirname,key) {
+                console.log(key);
+                //改变当前主目录ID 再调用刷新即可
+                this.now_path_key = key;
+                this.path_items.push({text: dirname, key: key});
+                this.refresh();
+            },
+            refresh() {
+                //获取当前文件夹文件列表
+                this.$ajax
+                    .get(this.server +"/api/general/share?key="+this.now_path_key)
+                    .then(response => {
+                        this.items.splice(0);
+                        this.items.push.apply(this.items,response.data.data);
+                    })
+                    .catch(error => {
+                        //获取根目录失败
+                    });
+            },
+            setNowPathKey(key) {
+                this.now_path_key = key;
+                this.path_items.push({text: 'All File', key: key})
+            },
         },
         created() {
+            //检测是否登录
+            if (sessionStorage.getItem("_login") !== null || localStorage.getItem("_login") !== null) {
+                this.isLogin = true;
+            }
+
             //获取文件列表
             let key = this.$route.params.key;
             this.$ajax
@@ -181,6 +238,9 @@
                 .then(response => {
                     this.items.push.apply(this.items,response.data.data);
                     this.filename = response.data.message;
+                    if (response.data.count > 1) {
+                        this.setNowPathKey(key);
+                    }
                 })
                 .catch(error => {
                     //获取根目录失败
