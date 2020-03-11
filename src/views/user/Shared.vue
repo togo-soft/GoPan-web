@@ -38,14 +38,8 @@
                                                     <i :class="iconType(row.value)"></i>
                                                 </span>
                                                 <span class="name mb-0 text-sm">
-                                                        {{ row.value }}
+                                                        <a :href="'/share/' + row.item.fsk" target="_blank">{{ row.value }}</a>
                                                     </span>
-                                            </div>
-                                        </template>
-
-                                        <template v-slot:cell(size)="row">
-                                            <div class="field-style">
-                                                {{ row.value }}
                                             </div>
                                         </template>
 
@@ -55,10 +49,19 @@
                                             </div>
                                         </template>
 
+                                        <template v-slot:cell(fsk)="row">
+                                            <div class="field-style">
+                                                {{ row.value }}
+                                            </div>
+                                        </template>
+
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
                                                 <a class="remove" href="javascript:void(0)" title="Copy file share key" v-clipboard:copy="row.item.fsk">
-                                                    <i class="fas fa-copy"></i>
+                                                    <i class="fas fa-key"></i>
+                                                </a>
+                                                <a class="remove" href="javascript:void(0)" title="Copy share link" v-clipboard:copy="website + row.item.fsk">
+                                                    <i class="fas fa-link"></i>
                                                 </a>
                                                 <a class="remove" href="javascript:void(0)" title="Cancel sharing" @click="cancel(row.item.id)">
                                                     <i class="fas fa-trash-alt"></i>
@@ -92,30 +95,11 @@
         name: 'shared',
         data() {
             return {
-                // file是文件上传模态的数据对象
-                file: {
-                    directory_name: '',
-                    fid: '',
-                    current_file: null,//文件对象
-                    progress_max: 100,//进度条最大值
-                    progress_rate: 0,//进度条初始值
-                    show_progress: false,//显示进度条? 在点击上传按钮触发
-                    show_upload_result: false,//上传结果 上传结束后或者上传失败触发
-                    show_message: '',//模态输出信息
-                    dismissSecs: 5,//默认提示消息5秒后自动关闭
-                    dismissCountDown: 0,//当达到0时 自动关闭消息提醒
-                    showDismissibleAlert: false,//默认打开消息提醒？
-                    alertVariant: 'success',//默认消息提示颜色
-                    storage_result: {},//上传结果
-                },
-                //文件系统路径 每次操作目录都需要刷新该结果集
-                path_items: [
-
-                ],
                 // 某文件夹中的数据列表
                 items: [],
                 fields: [
                     {key: 'filename', label: 'FileName'},
+                    {key: 'fsk', label: 'File Share Key'},
                     {key: 'uptime', label: 'Update Time', class: 'text-center', sortable: true},
                     {key: 'actions', label: 'Actions'},
                 ],
@@ -124,19 +108,11 @@
                     currentPage: 1,
                 },
                 user: {},// token uid username
-                preview: {
-                    fileType: {},
-                    source: ''
-                },
-                removeFileObject: {
-
-                },
+                //客户端服务地址
+                website: ''
             }
         },
         methods: {
-            countDownChanged(dismissCountDown) {
-                this.file.dismissCountDown = dismissCountDown
-            },
             refresh(){
                 let headers = {
                     Authorization: "Bearer " + this.user.token,
@@ -172,10 +148,8 @@
                     headers: headers
                 }).then(response => {
                     console.log(response.data);
+                    this.refresh();
                 });
-            },
-            copy(key) {
-
             },
             iconType(filename) {
                 let res = FileTools.matchType(filename);
@@ -234,9 +208,6 @@
                     }
                 }
             },
-            fileType(filename) {
-                return FileTools.matchType(filename);
-            },
             getToken(){
                 //获取token 若不存在 则跳转到登录页面 若存在 则拉取页面数据 中间过程中进行鉴权
                 if(localStorage.getItem("_type") === "localStorage") {
@@ -258,22 +229,10 @@
                 //没有token相关信息 页面重定向
                 return;
             }else{
+                //获取分享链接的前缀
+                this.website = this.client + '/share/';
                 // 登录成功 获取文件根目录
-                var headers = {
-                    Authorization: "Bearer " + this.user.token,
-                    uid: this.user.uid
-                };
-                //获取根文件列表
-                this.$ajax
-                    .get(this.server +"/api/file/share/list?username="+this.user.username,{
-                        headers:headers
-                    })
-                    .then(response => {
-                        this.items.push.apply(this.items,response.data.data);
-                    })
-                    .catch(error => {
-                        //获取根目录失败
-                    });
+                this.refresh();
             }
         },
         computed: {

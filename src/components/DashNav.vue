@@ -12,8 +12,8 @@
                 <i class="fas fa-home"></i> Dashboard </router-link>
             <router-link :to="{name:'shared'}" class="dash-nav-item">
                 <i class="fas fa-share-alt"></i> Shared </router-link>
-<!--            <router-link :to="{name:'favorite'}" class="dash-nav-item">-->
-<!--                <i class="fas fa-heart"></i> Favorite </router-link>-->
+            <router-link :to="{name:'collection'}" class="dash-nav-item">
+                <i class="fas fa-heart"></i> Collection </router-link>
             <router-link :to="{name:'secret'}" class="dash-nav-item">
                 <i class="fas fa-mask"></i> Secret </router-link>
             <router-link :to="{name:'account'}" class="dash-nav-item">

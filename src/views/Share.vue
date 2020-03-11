@@ -29,6 +29,11 @@
                                     <div class="col">
                                         <h3>{{filename}}</h3>
                                     </div>
+                                    <div v-if="isLogin" class="col text-right">
+                                        <b-button type="button" variant="primary" @click="collection">
+                                            <i class="far fa-heart"></i> Collection
+                                        </b-button>
+                                    </div>
                                 </div>
                                 <div v-if="path_items.length >= 1" class="row align-items-center">
                                     <h5 class="mb-0 path-style">
@@ -82,7 +87,7 @@
                                                     {{row.value}} MB
                                                 </span>
                                             <span v-else>
-                                                    {{rounding(row.value / 1024)}} GB
+                                                    {{(row.value / 1024).toFixed(2)}} GB
                                                 </span>
                                         </div>
                                     </template>
@@ -129,8 +134,10 @@
                     {key: 'uptime', label: 'Update Time', class: 'text-center'},
                     {key: 'actions', label: 'Actions'},
                 ],
+                user: {},// token uid username
                 filename: '',//根文件夹的名称 标识当前分享的名称
                 now_path_key: '', //当前文件目录下的fsk
+                root_key: ''
             }
         },
         methods: {
@@ -191,6 +198,21 @@
                     }
                 }
             },
+            getToken() {
+                //获取token 若不存在 则跳转到登录页面 若存在 则拉取页面数据 中间过程中进行鉴权
+                if (localStorage.getItem("_type") === "localStorage") {
+                    //token在localStorage 上
+                    this.user.token = localStorage.getItem("_token");
+                    this.user.uid = localStorage.getItem("_uid");
+                    this.user.username = localStorage.getItem("_username");
+                } else {
+                    //token在sessionStorage中
+                    this.user.token = sessionStorage.getItem("_token");
+                    this.user.uid = sessionStorage.getItem("_uid");
+                    this.user.username = sessionStorage.getItem("_username");
+                }
+                return !(this.user.token === null || this.user.uid === null);
+            },
             downloadFile(item) {
                 return this.storage + item.filepath;
             },
@@ -224,15 +246,44 @@
                 this.now_path_key = key;
                 this.path_items.push({text: 'All File', key: key})
             },
+            collection() {
+                //没有登陆,无法继续操作
+                if (!this.isLogin) {
+                    alert('操作非法');
+                    return
+                }
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                let param = new URLSearchParams({
+                    username: this.user.username,
+                    fsk: this.root_key,
+                    filename: this.filename
+                });
+                this.$ajax
+                    .post(this.server +"/api/file/collection", param,{
+                        headers: headers
+                    })
+                .then(response => {
+                    //收藏成功
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log(error.response);
+                })
+            }
         },
         created() {
             //检测是否登录
-            if (sessionStorage.getItem("_login") !== null || localStorage.getItem("_login") !== null) {
+            if (this.getToken()) {
                 this.isLogin = true;
             }
-
-            //获取文件列表
+            //获取文件Key
             let key = this.$route.params.key;
+            //存储 root-key
+            this.root_key = key;
+            //获取文件列表
             this.$ajax
                 .get(this.server +"/api/general/share?key="+key)
                 .then(response => {

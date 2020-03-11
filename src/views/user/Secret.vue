@@ -54,7 +54,7 @@
                                                     {{row.value}} MB
                                                 </span>
                                                 <span v-else>
-                                                    {{rounding(row.value / 1024)}} GB
+                                                    {{(row.value / 1024).toFixed(2)}} GB
                                                 </span>
                                             </div>
                                         </template>

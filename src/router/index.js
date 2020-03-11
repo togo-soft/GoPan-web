@@ -59,9 +59,9 @@ const routes = [
                 component: () => import('../views/user/Shared.vue')
             },
             {
-                path: 'favorite',
-                name: 'favorite',
-                component: () => import('../views/user/Favorite.vue')
+                path: 'collection',
+                name: 'collection',
+                component: () => import('../views/user/Collection.vue')
             },
             {
                 path: 'secret',
@@ -73,12 +73,12 @@ const routes = [
                 name: 'account',
                 component: () => import('../views/user/Account.vue')
             },
-            {
-                path: 'info/:username',
-                name:'user_info',
-                redirect: '/user/account',
-                component: () => import('../views/user/UserInfo.vue')
-            }
+            // {
+            //     path: 'info/:username',
+            //     name:'user_info',
+            //     redirect: '/user/account',
+            //     component: () => import('../views/user/UserInfo.vue')
+            // }
         ]
     },
     {

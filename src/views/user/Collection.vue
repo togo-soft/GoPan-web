@@ -9,12 +9,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <b-button type="button" variant="primary" class="mr-2">
-                                                <i class="fas fa-cloud-upload-alt"></i> Upload
-                                            </b-button>
-                                            <b-button type="button" variant="primary">
-                                                <i class="fas fa-folder-plus"></i> Mkdir
-                                            </b-button>
+                                            <h3>Collection list</h3>
                                         </div>
                                         <div class="col text-right">
                                             <b-button type="button" variant="primary">
@@ -22,46 +17,35 @@
                                             </b-button>
                                         </div>
                                     </div>
-                                    <div class="row align-items-center">
-                                        <h5 class="mb-0 ml-3 mt-2 path-style">
-                                            <template>
-                                                <b-breadcrumb :items="path_items"></b-breadcrumb>
-                                            </template>
-                                        </h5>
-                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <b-table
+                                            id="collection"
                                             show-empty
                                             small
                                             stacked="md"
                                             :items="items"
                                             :fields="fields"
-                                            @row-hovered="isHovered"
                                             table-class="table-style"
                                     >
                                         <template v-slot:cell(filename)="row">
                                             <div class="media align-items-center first-field-style">
-                                                <span v-if="row.item.isDir" class="avatar rounded-circle"
-                                                      style="font-size: 24px; color: Dodgerblue;">
-                                                    <i class="fas fa-folder"></i>
-                                                </span>
-                                                <span v-else class="avatar rounded-circle" style="font-size: 24px; color: Mediumslateblue;">
-                                                    <i :class="iconType(row.value)"></i>
-                                                </span>
+<!--                                                <span  class="avatar rounded-circle" style="font-size: 24px; color: Mediumslateblue;">-->
+<!--                                                    <i :class="iconType(row.value)"></i>-->
+<!--                                                </span>-->
                                                 <span class="name mb-0 text-sm">
-                                                        {{ row.value }}
+                                                        <a :href="'/share/' + row.item.fsk" target="_blank">{{ row.value }}</a>
                                                     </span>
                                             </div>
                                         </template>
 
-                                        <template v-slot:cell(size)="row">
+                                        <template v-slot:cell(fsk)="row">
                                             <div class="field-style">
                                                 {{ row.value }}
                                             </div>
                                         </template>
 
-                                        <template v-slot:cell(utime)="row">
+                                        <template v-slot:cell(ctime)="row">
                                             <div class="field-style">
                                                 {{ row.value }}
                                             </div>
@@ -69,16 +53,7 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="share" href="javascript:void(0)" title="share">
-                                                    <i class="fas fa-share-alt-square"></i>
-                                                </a>
-                                                <a class="edit" href="javascript:void(0)" title="edit">
-                                                    <i class="fas fa-pen-square"></i>
-                                                </a>
-                                                <a class="download" href="javascript:void(0)" title="download">
-                                                    <i class="fas fa-arrow-circle-down"></i>
-                                                </a>
-                                                <a class="remove" href="javascript:void(0)" title="Remove">
+                                                <a class="remove" href="javascript:void(0)" title="Remove" @click="cancel(row.item.id)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </div>
@@ -87,18 +62,12 @@
                                     </b-table>
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
-                                    <ul class="pagination">
-                                        <li class="page-item prev-page disabled"><a aria-label="Previous"
-                                                                                    class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true"
-                                                                      class="fa fa-angle-left"></i></span></a></li>
-                                        <li class="page-item active"><a class="page-link">1</a></li>
-                                        <li class="page-item"><a class="page-link">2</a></li>
-                                        <li class="page-item"><a class="page-link">3</a></li>
-                                        <li class="page-item next-page"><a aria-label="Next" class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true" class="fa fa-angle-right"></i></span></a>
-                                        </li>
-                                    </ul>
+                                    <b-pagination
+                                            v-model="pagination.currentPage"
+                                            :total-rows="rows"
+                                            :per-page="pagination.perPage"
+                                            aria-controls="collection"
+                                    ></b-pagination>
                                 </div>
                             </div>
                         </b-col>
@@ -113,66 +82,27 @@
     import FileTools from "@/functions/FileTools";
 
     export default {
-        name: 'shared',
+        name: 'collection',
         data() {
             return {
-                path_items: [
-                    {
-                        text: 'All File',
-                        href: '#'
-                    },
-                    {
-                        text: 'Manage',
-                        href: '#'
-                    },
-                    {
-                        text: 'Library',
-                        active: true
-                    }
-                ],
-                items: [
-                    {filename: 'Typora', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Music', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Video', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Game', size: '20M', utime: '2020-02-05 17:49:53', isDir: true},
-                    {filename: 'Typora.zip', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.jpeg', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.mp3', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.mp4', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.html', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.css', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.js', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.exe', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.doc', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                    {filename: 'Typora.blc', size: '20M', utime: '2020-02-05 17:49:53', isDir: false},
-                ],
+                items: [],
                 fields: [
                     {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size'},
-                    {key: 'utime', label: 'Update Time', class: 'text-center'},
+                    {key: 'fsk', label: 'File Share Key'},
+                    {key: 'ctime', label: 'Collection Time', class: 'text-center'},
                     {key: 'actions', label: 'Actions'},
                 ],
-                totalRows: 1,
-                currentPage: 1,
-                perPage: 5,
-                pageOptions: [5, 10, 15],
-                sortBy: '',
-                sortDesc: false,
-                sortDirection: 'asc',
-                filter: null,
-                filterOn: [],
-                infoModal: {
-                    id: 'info-modal',
-                    title: '',
-                    content: ''
-                }
+                //分页相关
+                pagination: {
+                    perPage: 15,
+                    currentPage: 1,
+                },
+                //当前用户登录信息
+                user: {},
+                website: ''
             }
         },
         methods: {
-            isHovered(item, index, event) {
-                //todo
-
-            },
             iconType(filename) {
                 var result = FileTools.matchType(filename);
                 if (result === 'image') {
@@ -213,12 +143,81 @@
                         'fas fa-question': true
                     }
                 }
+            },
+            getToken(){
+                //获取token 若不存在 则跳转到登录页面 若存在 则拉取页面数据 中间过程中进行鉴权
+                if(localStorage.getItem("_type") === "localStorage") {
+                    //token在localStorage 上
+                    this.user.token = localStorage.getItem("_token");
+                    this.user.uid = localStorage.getItem("_uid");
+                    this.user.username = localStorage.getItem("_username");
+                }else{
+                    //token在sessionStorage中
+                    this.user.token = sessionStorage.getItem("_token");
+                    this.user.uid = sessionStorage.getItem("_uid");
+                    this.user.username = sessionStorage.getItem("_username");
+                }
+                return !(this.user.token === null || this.user.uid === null);
+            },
+            refresh(){
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                //获取当前文件夹文件列表
+                this.$ajax
+                    .get(this.server +"/api/file/collection/list?username="+this.user.username,{
+                        headers:headers
+                    })
+                    .then(response => {
+                        //先清空数组元素
+                        this.items.splice(0);
+                        //将结果Push到数组
+                        this.items.push.apply(this.items,response.data.data);
+                    })
+                    .catch(error => {
+                        if (error.response.status === 400) {
+                            alert("token错误");
+                            this.$router.push({
+                                path: this.redirect || "/auth/login"
+                            });
+                        }
+                        console.log(error.response);
+                    });
+            },
+            cancel(id){
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                this.$ajax.get(this.server + '/api/file/collection/cancel?username=' + this.user.username + '&id=' + id, {
+                    headers: headers
+                }).then(response => {
+                    console.log(response.data);
+                    this.refresh();
+                });
+            },
+        },
+        created(){
+            if(!this.getToken()) {
+                //没有token相关信息 页面重定向
+                return;
+            }else{
+                //获取分享链接的前缀
+                this.website = this.client + '/share/';
+                // 登录成功 获取文件根目录
+                this.refresh();
             }
         },
+        computed: {
+            rows() {
+                return this.items.length
+            }
+        }
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .stats-percentage {
         padding-right: 5px;
         color: #ffde08;
@@ -246,18 +245,18 @@
         background-color: #fff;
     }
 
-    .btn-primary {
-        border-radius: 5px;
+    .btn-primary, .btn-danger {
+        border-radius: 5px !important;
     }
 
     .breadcrumb {
-        background-color: rgba(0,0,0,0) !important;
+        background-color: rgba(0, 0, 0, 0) !important;
         margin-bottom: 0 !important;
     }
 
     .avatar {
         color: #fff;
-        background-color: rgba(0,0,0,0);
+        background-color: rgba(0, 0, 0, 0);
         display: inline-flex;
         -webkit-box-align: center;
         -ms-flex-align: center;
@@ -270,8 +269,9 @@
         height: 48px;
         width: 48px;
     }
+
     .rounded-circle {
-        border-radius: 50%!important;
+        border-radius: 50% !important;
     }
 
     .path-style {
@@ -281,6 +281,8 @@
     }
 
     .first-field-style {
+        line-height: 46px;
+        height: 46px;
         padding-left: 10px;
         text-align: left;
     }
@@ -299,6 +301,7 @@
         thead {
             background-color: #f6f9fc;
             color: #8898aa;
+
             tr {
                 th {
                     padding-left: 1.5rem;
@@ -306,6 +309,7 @@
                 }
             }
         }
+
         tbody tr td {
             padding-left: 1.4rem;
         }

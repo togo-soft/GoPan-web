@@ -86,14 +86,13 @@
                         let data = response.data;
                         if(this.user.remember) {
                             //写入localStorage中
-                            localStorage.setItem("_type",'localStorage');//记录方式 是否使用localStorage存储token
+                            localStorage.setItem("_type",'localStorage');//记录登录方式 是否使用localStorage存储token
                             localStorage.setItem("_token",data.message);
                             localStorage.setItem("_fk",data.data.fk);
                             localStorage.setItem("_iv",data.data.iv);
                             localStorage.setItem("_ak",data.data.ak);
                             localStorage.setItem("_uid",data.data.id);
                             localStorage.setItem("_username",data.data.username);
-                            localStorage.setItem("_login","yes");
                         }else{
                             //写入sessionStorage中
                             sessionStorage.setItem("_token",data.message);
@@ -102,7 +101,6 @@
                             sessionStorage.setItem("_iv",data.data.iv);
                             sessionStorage.setItem("_ak",data.data.ak);
                             sessionStorage.setItem("_username",data.data.username);
-                            sessionStorage.setItem("_login","yes");
                         }
                         //跳转到后台
                         this.$router.push({

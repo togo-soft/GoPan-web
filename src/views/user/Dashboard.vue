@@ -103,10 +103,10 @@
                                                     -
                                                 </span>
                                                 <span v-else-if="row.value < 1024">
-                                                    {{rounding(row.value)}} MB
+                                                    {{row.value}} MB
                                                 </span>
                                                 <span v-else>
-                                                    {{rounding(row.value / 1024)}} GB
+                                                    {{(row.value / 1024).toFixed(2)}} GB
                                                 </span>
                                             </div>
                                         </template>
@@ -194,7 +194,7 @@
             </div>
         </b-modal>
         <rename :id="file.fid" :user="user"></rename>
-        <share :id="file.fid" :user="user"></share>
+        <share :id="file.fid" :user="user" @share2Refresh="refresh"></share>
         <b-modal id="file-isShare" centered title="Warning" hide-footer hide-header-close>
             The file has been shared, you don't need to operate any more
         </b-modal>
@@ -501,9 +501,6 @@
             getNowPathID(id) {
                 this.now_path_id = id;
                 this.path_items.push({text: 'All File', id: id})
-            },
-            rounding(number) {
-                return Math.round(number);
             },
             getRoot() {
                 let headers = {

@@ -7,7 +7,7 @@
                         <b-img src="img/logo.png" fluid alt="logo"></b-img>
                         <div class="intro-text">
                             <span class="subtitle">Cloud Disk</span>
-                            <span class="describe">Gopan is a campus network disk system based on Go + Vue.</span>
+                            <span class="describe">GoPan is a campus network disk system based on Go + Vue.</span>
                         </div>
                     </b-col>
                     <b-col v-if="!isLogin" lg="12" class="own-btn">
@@ -26,7 +26,7 @@
                 </b-row>
             </b-container>
         </header>
-        <div class="container protocal-notice hidden-xs">
+        <div class="container protocol-notice hidden-xs">
             <div class="row">
                 <div class="col-xs-12"></div>
             </div>
@@ -44,123 +44,74 @@
                 <div class="text-center mt-3">
                     <b-button variant="primary" @click="find">find</b-button>
                 </div>
+            </b-container>
+            <b-container fluid class="mt-5">
+                <h2 class="text-center">
+                    Getting Started
+                </h2>
+                <b-row>
+                    <b-col xl="6" lg="6" md="12" sm="12" offset-xl="3" offset-lg="3">
+                        <div class="intro-text intro-dev">Get started with GoPan, based on the world's most popular
+                            development model - Golang + Vue, for building responsive, highly concurrent sites.
+                        </div>
+                        <div>
+                            <h3 class="text-center">
+                                Technology stack
+                            </h3>
+                            <b-row>
+                                <b-col xl="6" lg="6" md="6" sm="12" offset-xl="3" offset-lg="3" offset-md="3">
+                                    <div>
+                                        <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue.js</a> <code
+                                            translate="translate" class="text-nowrap">v2.6</code> is required, Use <a href="https://getbootstrap.com/" target="_blank" rel="noopener">Bootstrap4</a> as the default UI
+                                    </div>
 
-<!--                <div class="list-group">-->
-<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
-<!--                        <b-row>-->
-<!--                            <b-col md="3">-->
-<!--                                <h4 class="file-author">vue</h4>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9">-->
-<!--                                <p class="file-description">-->
-<!--                                    游戏大全、音乐大全、视频大全-->
-<!--                                </p>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9" offset-md="3">-->
-<!--                <span class="package-extra-info"-->
-<!--                ><i class="fas fa-star"></i> 153551</span-->
-<!--                >-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-<!--                    </a>-->
-<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
-<!--                        <b-row>-->
-<!--                            <b-col md="3">-->
-<!--                                <h4 class="file-author">vue</h4>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9">-->
-<!--                                <p class="file-description">-->
-<!--                                    YII视频教程-全集-->
-<!--                                </p>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9" offset-md="3">-->
-<!--                <span class="package-extra-info"-->
-<!--                ><i class="fas fa-star"></i> 153551</span-->
-<!--                >-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-<!--                    </a>-->
-<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
-<!--                        <b-row>-->
-<!--                            <b-col md="3">-->
-<!--                                <h4 class="file-author">vue</h4>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9">-->
-<!--                                <p class="file-description">-->
-<!--                                    Golang教程-视频教程-某某某培训机构-->
-<!--                                </p>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9" offset-md="3">-->
-<!--                <span class="package-extra-info"-->
-<!--                ><i class="fas fa-star"></i> 153551</span-->
-<!--                >-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-<!--                    </a>-->
-<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
-<!--                        <b-row>-->
-<!--                            <b-col md="3">-->
-<!--                                <h4 class="file-author">vue</h4>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9">-->
-<!--                                <p class="file-description">-->
-<!--                                    Vue-->
-<!--                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue-->
-<!--                                    被设计为可以自底向上逐层应用。Vue-->
-<!--                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。-->
-<!--                                </p>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9" offset-md="3">-->
-<!--                <span class="package-extra-info"-->
-<!--                ><i class="fas fa-star"></i> 153551</span-->
-<!--                >-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-<!--                    </a>-->
-<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
-<!--                        <b-row>-->
-<!--                            <b-col md="3">-->
-<!--                                <h4 class="file-author">vue</h4>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9">-->
-<!--                                <p class="file-description">-->
-<!--                                    Vue-->
-<!--                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue-->
-<!--                                    被设计为可以自底向上逐层应用。Vue-->
-<!--                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。-->
-<!--                                </p>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9" offset-md="3">-->
-<!--                <span class="package-extra-info"-->
-<!--                ><i class="fas fa-star"></i> 153551</span-->
-<!--                >-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-<!--                    </a>-->
-<!--                    <a href="/vue/xxx" class="list-group-item" target="_blank">-->
-<!--                        <b-row>-->
-<!--                            <b-col md="3">-->
-<!--                                <h4 class="file-author">vue</h4>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9">-->
-<!--                                <p class="file-description">-->
-<!--                                    Vue-->
-<!--                                    是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue-->
-<!--                                    被设计为可以自底向上逐层应用。Vue-->
-<!--                                    的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。-->
-<!--                                </p>-->
-<!--                            </b-col>-->
-<!--                            <b-col md="9" offset-md="3">-->
-<!--                <span class="package-extra-info"-->
-<!--                ><i class="fas fa-star"></i> 153551</span-->
-<!--                >-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-<!--                    </a>-->
-<!--                    <a class="list-group-item text-center file-more">-->
-<!--                        查看更多分享-->
-<!--                    </a>-->
-<!--                </div>-->
+                                    <div>
+                                        <a href="https://golang.org/" target="_blank"
+                                           rel="noopener">Golang</a> <code translate="translate"
+                                                                              class="text-nowrap">v1.11</code> is
+                                        required, used to build the server.
+                                    </div>
+
+                                    <div>
+                                        <a href="https://www.mysql.com/" target="_blank" rel="noopener">MySQL</a> is
+                                        <strong>required</strong>
+                                    </div>
+
+                                    <div>
+                                        <a href="https://www.mongodb.com/" target="_blank" rel="noopener">MongoDB</a> is
+                                        <strong>required</strong>
+                                    </div>
+
+                                    <div>
+                                        <a href="https://redis.io/" target="_blank" rel="noopener">Redis</a> is
+                                        <strong>required</strong>
+                                    </div>
+
+                                    <div>
+                                        <a href="https://github.com/sjqzhang/go-fastdfs/" target="_blank" rel="noopener">go-fastdfs</a> is
+                                        <strong>required</strong>
+                                    </div>
+                                </b-col>
+                            </b-row>
+                        </div>
+                        <div>
+                            <h3 class="text-center mt-2">
+                                deploy
+                            </h3>
+                            <b-row>
+                                <b-col xl="6" lg="6" md="6" sm="12" offset-xl="3" offset-lg="3" offset-md="3">
+                                    <pre><code class="bash hljs">$ git <span class="hljs-built_in">clone</span> https://github.com/togo-soft/GoPan-web.git
+$ git <span class="hljs-built_in">clone</span> https://github.com/togo-soft/GoPan.git
+$ <span class="hljs-built_in">cd</span> GoPan-web    //启动客户端
+$ npm run serve
+$ <span class="hljs-built_in">cd</span> GoPan    //启动服务端
+$ go run .
+</code></pre>
+                                </b-col>
+                            </b-row>
+                        </div>
+                    </b-col>
+                </b-row>
             </b-container>
         </main>
         <footer class="bg-light-grey">
@@ -222,18 +173,35 @@
                     width: 50,
                     height: 50,
                 },
-                fsk: ''
+                fsk: '',
+                user: {}
+
             };
         },
         methods: {
+            getToken() {
+                //获取token 若不存在 则跳转到登录页面 若存在 则拉取页面数据 中间过程中进行鉴权
+                if (localStorage.getItem("_type") === "localStorage") {
+                    //token在localStorage 上
+                    this.user.token = localStorage.getItem("_token");
+                    this.user.uid = localStorage.getItem("_uid");
+                    this.user.username = localStorage.getItem("_username");
+                } else {
+                    //token在sessionStorage中
+                    this.user.token = sessionStorage.getItem("_token");
+                    this.user.uid = sessionStorage.getItem("_uid");
+                    this.user.username = sessionStorage.getItem("_username");
+                }
+                return !(this.user.token === null || this.user.uid === null);
+            },
             find() {
                 this.$router.push({
-                    path: this.redirect || "/share/"+this.fsk
+                    path: this.redirect || "/share/" + this.fsk
                 });
             }
         },
         created() {
-            if (sessionStorage.getItem("_login") !== null || localStorage.getItem("_login") !== null) {
+            if (this.getToken()) {
                 this.isLogin = true;
             }
         }
@@ -282,6 +250,11 @@
         color: #fff !important;
     }
 
+    .intro-dev {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
     .btn-outline {
         margin-top: 10px;
         margin-right: 3px;
@@ -292,7 +265,7 @@
     }
 
     main {
-        font-size: 15.4px;
+        font-size: 15px;
     }
 
     main a {
@@ -313,35 +286,7 @@
         display: inline-block;
     }
 
-    main span .unicon {
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-    main .file-description {
-        color: #777;
-    }
-
-    main .package-extra-info {
-        font-size: 13px;
-        color: #aaa;
-        vertical-align: middle;
-        line-height: 13px;
-    }
-
-    main .file-author {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        color: #000000;
-    }
-
-    main .file-more {
-        color: #186384;
-        font-weight: bold;
-    }
-
-    .protocal-notice {
+    .protocol-notice {
         margin-top: 30px;
     }
 
@@ -368,7 +313,23 @@
         background-color: rgba(229, 229, 229, 0.25);
     }
 
-    .text-darker {
-        color: #405263;
+    .hljs {
+        display: block;
+        overflow-x: auto;
+        padding: .5em;
+        background: #F0F0F0;
+    }
+    pre code {
+        margin-top: 10px;
+        text-align: left;
+        font-size: 18px;
+        font-family: code-saver, sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+    pre code {
+        font-size: inherit;
+        color: inherit;
+        word-break: normal;
     }
 </style>

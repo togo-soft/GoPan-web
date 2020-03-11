@@ -37,6 +37,7 @@
                     headers: headers
                 }).then(response => {
                     console.log(response.data);
+                    this.$emit('share2Refresh');
                 });
                 this.$bvModal.hide('file-share');
             },
