@@ -11,20 +11,34 @@
                                         <div class="col">
                                             <h4>User Manager</h4>
                                         </div>
-                                        <div class="col text-right">
-                                            <b-button type="button" variant="primary">
-                                                <i class="fas fa-sync-alt"></i> Refresh
-                                            </b-button>
+                                        <div class="col">
+                                            <b-input-group size="sm">
+                                                <b-form-input
+                                                        v-model="filter"
+                                                        type="search"
+                                                        id="filterInput"
+                                                        placeholder="Search ..."
+                                                        class="filterInput"
+                                                ></b-form-input>
+                                                <b-input-group-append>
+                                                    <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                                                </b-input-group-append>
+                                                <b-button type="button" variant="primary" class="ml-2">
+                                                    <i class="fas fa-sync-alt"></i> Refresh
+                                                </b-button>
+                                            </b-input-group>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
                                     <b-table
+                                            id="user-list"
                                             show-empty
                                             small
                                             stacked="md"
                                             :items="user_list"
                                             :fields="fields"
+                                            :filter="filter"
                                             table-class="table-style"
                                     >
                                         <template v-slot:cell(username)="row">
@@ -56,7 +70,7 @@
                                                 <a class="ban" href="javascript:void(0)" title="ban" @click="ban(row.item)">
                                                     <i class="fas fa-ban"></i>
                                                 </a>
-                                                <a class="group" href="javascript:void(0)" title="group" @click="group(row.item.id)">
+                                                <a class="group" href="javascript:void(0)" title="group" @click="group(row.item)">
                                                     <i class="fas fa-user-friends"></i>
                                                 </a>
                                             </div>
@@ -65,18 +79,12 @@
                                     </b-table>
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
-                                    <ul class="pagination">
-                                        <li class="page-item prev-page disabled"><a aria-label="Previous"
-                                                                                    class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true"
-                                                                      class="fa fa-angle-left"></i></span></a></li>
-                                        <li class="page-item active"><a class="page-link">1</a></li>
-                                        <li class="page-item"><a class="page-link">2</a></li>
-                                        <li class="page-item"><a class="page-link">3</a></li>
-                                        <li class="page-item next-page"><a aria-label="Next" class="page-link"><span
-                                                aria-hidden="true"><i aria-hidden="true" class="fa fa-angle-right"></i></span></a>
-                                        </li>
-                                    </ul>
+                                    <b-pagination
+                                            v-model="pagination.currentPage"
+                                            :total-rows="rows"
+                                            :per-page="pagination.perPage"
+                                            aria-controls="user-list"
+                                    ></b-pagination>
                                 </div>
                             </div>
                         </b-col>
@@ -111,12 +119,16 @@
                 user_list: [],
                 fields: [
                     {key: 'username', label: 'Username'},
-                    {key: 'nickname', label: 'Nickname'},
                     {key: 'email', label: 'Email'},
                     {key: 'create_time', label: 'Create Time', class: 'text-center'},
                     {key: 'actions', label: 'Actions'},
                 ],
-                group_list: []
+                group_list: [],
+                pagination: {
+                    perPage: 15,
+                    currentPage: 1,
+                },
+                filter: null,
             }
         },
         methods: {
@@ -140,13 +152,45 @@
                         console.log(error.response);
                     });
             },
-            group(id){
-                this.current_user.id = id;
+            group(item){
+                this.current_user = item;
                 this.$bvModal.show('choose-group');
             },
             sureGroup(){
                 //修改用户组信息 [容量修改]
-                console.log(this.group_rule,this.current_user.id);
+                let headers = {
+                    token: sessionStorage.getItem("_admin_token"),
+                };
+                this.$ajax
+                    .get(this.server + "/api/admin/user/group/update?username="+this.current_user.username+"&role="+this.group_rule, {
+                        headers: headers
+                    })
+                    .then(response => {
+                        this.$bvModal.hide('choose-group');
+                        this.refresh();
+                    })
+                    .catch(error => {
+                        //获取失败
+                        console.log(error.response);
+                    });
+
+            },
+            refresh() {
+                let headers = {
+                    token: sessionStorage.getItem("_admin_token"),
+                };
+                this.$ajax
+                    .get(this.server + "/api/admin/user/list", {
+                        headers: headers
+                    })
+                    .then(response => {
+                        this.user_list.splice(0);
+                        this.user_list.push.apply(this.user_list,response.data.data);
+                    })
+                    .catch(error => {
+                        //获取失败
+                        console.log(error.response);
+                    });
             },
             getGroup() {
                 let headers = {
@@ -186,6 +230,11 @@
         created() {
             this.getUserList();
             this.getGroup();
+        },
+        computed: {
+            rows() {
+                return this.user_list.length
+            }
         }
     }
 </script>
@@ -306,5 +355,9 @@
         .fas {
             padding-right: 5px;
         }
+    }
+
+    #filterInput {
+        height: 40px;
     }
 </style>

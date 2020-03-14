@@ -176,7 +176,7 @@
             },
             create() {
                 if (this.role.rule === null || this.role.name === "" || this.role.explain === "") {
-                    console.log("please choose option");
+                    alert("please choose option");
                     return;
                 }
                 if (this.role.rule === '512') {
@@ -216,8 +216,8 @@
                         headers: headers
                     })
                     .then(response => {
-                        this.show_message = response.data.message;
-                        this.dismissCountDown = this.dismissSecs;
+                        this.$bvModal.hide('new-role');
+                        this.refresh();
                     })
                     .catch(error => {
                         //获取失败

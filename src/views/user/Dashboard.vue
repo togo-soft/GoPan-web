@@ -39,8 +39,11 @@
                                             <b-button type="button" variant="primary" class="mr-2" v-b-modal.upload>
                                                 <i class="fas fa-cloud-upload-alt"></i> Upload
                                             </b-button>
-                                            <b-button type="button" variant="primary" v-b-modal.mkdir>
+                                            <b-button type="button" variant="primary" class="mr-2" v-b-modal.mkdir>
                                                 <i class="fas fa-folder-plus"></i> Mkdir
+                                            </b-button>
+                                            <b-button v-if="move_file_id !== ''" type="button" variant="primary" @click="pasteFile">
+                                                <i class="fas fa-paste"></i> Paste
                                             </b-button>
                                         </div>
                                         <div class="col text-right">
@@ -125,7 +128,10 @@
                                                 <a class="edit" title="edit" @click="renameFile(row.item.id)">
                                                     <i class="fas fa-pen-square"></i>
                                                 </a>
-                                                <a class="remove" title="Remove" @click="removeFile(row.item)">
+                                                <a class="move" title="move" @click="moveFile(row.item.id)">
+                                                    <i class="fas fa-arrows-alt"></i>
+                                                </a>
+                                                <a class="remove" title="remove" @click="removeFile(row.item)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                                 <span v-if="!row.item.isDir">
@@ -257,7 +263,8 @@
                     fileType: {},
                     source: ''
                 },
-                removeFileObject: {},
+                removeFileObject: {},//需要移除的文件对象
+                move_file_id: '',//需要移动的文件ID
                 now_path_id: '', //当前文件目录下的ID
             }
         },
@@ -433,6 +440,35 @@
             removeFile(item) {
                 this.removeFileObject = item;
                 this.$bvModal.show('file-remove');
+            },
+            moveFile(id){
+                this.move_file_id = id;
+            },
+            pasteFile(){
+                if(this.move_file_id === this.now_path_id) {
+                    alert('could not paste in this dir');
+                }
+                //发起修改父级目录
+                let headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                this.$ajax
+                    .get(this.server + "/api/file/move?username=" + this.user.username + "&id=" + this.move_file_id + "&pid=" + this.now_path_id, {
+                        headers: headers
+                    })
+                    .then(response => {
+                        //获取当前目录ID
+                        // 创建成功
+                        this.move_file_id = '';
+                        this.refresh();
+                    })
+                    .catch(error => {
+                        //失败
+                        this.file.show_upload_result = true;
+                        this.file.dismissCountDown = this.file.dismissSecs;
+                        this.file.show_message = '移动文件失败!';
+                    });
             },
             shareFile(item) {
                 this.file.fid = item.id;
