@@ -2,12 +2,12 @@
     <div class="remove">
         <b-modal id="file-remove" hide-footer centered>
             <template v-slot:modal-title>
-                Confirm <code>delete</code> ?
+                确认 <code>删除</code> ?
             </template>
             <div class="d-block text-center">
-                <h3>After confirming the deletion, the file will be unrecoverable. Are you sure?</h3>
+                <h3>确认后，你的文件将无法恢复. 你确定吗?</h3>
             </div>
-            <b-button class="mt-3" block @click="remove" variant="danger">I'm sure!</b-button>
+            <b-button class="mt-3" block @click="remove" variant="danger">确定!</b-button>
         </b-modal>
 
     </div>

@@ -15,21 +15,21 @@
             </b-alert>
         </div>
         <div class="card-body">
-            <h4 class="card-title">Register</h4>
+            <h4 class="card-title">注册</h4>
             <form role="form">
-                <b-form-group label="Username">
+                <b-form-group label="用户名">
                     <b-form-input id="username" v-model="user.username" required autofocus></b-form-input>
                 </b-form-group>
 
-                <b-form-group label="Email">
+                <b-form-group label="邮箱">
                     <b-form-input id="email" v-model="user.email" required type="email"></b-form-input>
                 </b-form-group>
 
-                <b-form-group label="Password">
+                <b-form-group label="密码">
                     <b-form-input id="password" v-model="user.password" type="password" required></b-form-input>
                 </b-form-group>
 
-                <b-form-group label="RePassword">
+                <b-form-group label="确认密码">
                     <b-form-input id="repassword" v-model="user.repassword" type="password" required></b-form-input>
                 </b-form-group>
 
@@ -42,18 +42,18 @@
                             unchecked-value="false"
                             required
                     >
-                        I agree to the <a href="#">Terms and Conditions</a>
+                        同意 <a href="#">网站相关协议</a>
                     </b-form-checkbox>
                 </div>
 
                 <div class="form-group m-0">
                     <button type="button" class="btn btn-primary btn-block" @click="signUp">
-                        Register
+                        注册
                     </button>
                 </div>
                 <div class="mt-4 text-center">
-                    Already have an account?
-                    <router-link :to="{name:'login'}">Login</router-link>
+                    已有账户?
+                    <router-link :to="{name:'login'}">登录</router-link>
                 </div>
             </form>
         </div>
@@ -95,11 +95,11 @@
                     this.user.repassword === ""
                 ) {
                     this.dismissCountDown = this.dismissSecs;
-                    this.warningMessage = 'Input options cannot be empty!';
+                    this.warningMessage = '输入项不能为空!';
                     return;
                 } else if (this.user.password !== this.user.repassword) {
                     this.dismissCountDown = this.dismissSecs;
-                    this.warningMessage = 'Passwords do not match!';
+                    this.warningMessage = '密码不匹配!';
                     return;
                 }
                 //  检测完成
@@ -114,14 +114,14 @@
                     .then(function(response) {
                         console.log(response.data);
                         if (response.data.code === 200) {
-                            _this.warningMessage = 'registration success! please sign in!';
+                            _this.warningMessage = '注册成功,请登录!';
                             _this.isRegisterValue();
                         }
                     })
                     .catch(error => {
                         console.log(error.response);
                         _this.dismissCountDown = _this.dismissSecs;
-                        _this.warningMessage = 'registration failed! Please try again!';
+                        _this.warningMessage = '注册失败，请重试!';
                     });
             }
         }

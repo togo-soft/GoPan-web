@@ -1,7 +1,7 @@
 <template>
     <div class="logout">
-        <b-button variant="outline-primary" @click="login">login</b-button>
-        <b-button variant="outline-primary" @click="index">index</b-button>
+        <b-button variant="outline-primary" @click="login">登录</b-button>
+        <b-button variant="outline-primary" @click="index">首页</b-button>
     </div>
 </template>
 

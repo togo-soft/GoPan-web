@@ -98,11 +98,6 @@ const routes = [
                 component: () => import('../views/admin/UserManager.vue')
             },
             {
-                path: 'app',
-                name: 'admin-app',
-                component: () => import('../views/admin/AppManager.vue')
-            },
-            {
                 path: 'cluster',
                 name: 'admin-cluster',
                 component: () => import('../views/admin/ClusterManager.vue')

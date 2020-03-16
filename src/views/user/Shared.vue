@@ -9,11 +9,11 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h3>Shared list</h3>
+                                            <h3>共享列表</h3>
                                         </div>
                                         <div class="col text-right">
                                             <b-button type="button" variant="primary" @click="refresh">
-                                                <i class="fas fa-sync-alt"></i> Refresh
+                                                <i class="fas fa-sync-alt"></i> 刷新
                                             </b-button>
                                         </div>
                                     </div>
@@ -57,13 +57,13 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="remove" href="javascript:void(0)" title="Copy file share key" v-clipboard:copy="row.item.fsk">
+                                                <a class="remove" href="javascript:void(0)" title="复制文件共享码" v-clipboard:copy="row.item.fsk">
                                                     <i class="fas fa-key"></i>
                                                 </a>
-                                                <a class="remove" href="javascript:void(0)" title="Copy share link" v-clipboard:copy="website + row.item.fsk">
+                                                <a class="remove" href="javascript:void(0)" title="复制文件共享链接" v-clipboard:copy="website + row.item.fsk">
                                                     <i class="fas fa-link"></i>
                                                 </a>
-                                                <a class="remove" href="javascript:void(0)" title="Cancel sharing" @click="cancel(row.item.id)">
+                                                <a class="remove" href="javascript:void(0)" title="取消共享" @click="cancel(row.item.id)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </div>
@@ -98,10 +98,10 @@
                 // 某文件夹中的数据列表
                 items: [],
                 fields: [
-                    {key: 'filename', label: 'FileName'},
-                    {key: 'fsk', label: 'File Share Key'},
-                    {key: 'uptime', label: 'Update Time', class: 'text-center', sortable: true},
-                    {key: 'actions', label: 'Actions'},
+                    {key: 'filename', label: '文件名'},
+                    {key: 'fsk', label: '文件共享码'},
+                    {key: 'uptime', label: '上传时间', class: 'text-center', sortable: true},
+                    {key: 'actions', label: '操作'},
                 ],
                 pagination: {
                     perPage: 15,

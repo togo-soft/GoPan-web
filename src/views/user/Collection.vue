@@ -9,11 +9,11 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h3>Collection list</h3>
+                                            <h3>收藏列表</h3>
                                         </div>
                                         <div class="col text-right">
                                             <b-button type="button" variant="primary">
-                                                <i class="fas fa-sync-alt"></i> Refresh
+                                                <i class="fas fa-sync-alt"></i> 刷新
                                             </b-button>
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="remove" href="javascript:void(0)" title="Remove" @click="cancel(row.item.id)">
+                                                <a class="remove" href="javascript:void(0)" title="取消收藏" @click="cancel(row.item.id)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </div>
@@ -87,10 +87,10 @@
             return {
                 items: [],
                 fields: [
-                    {key: 'filename', label: 'FileName'},
-                    {key: 'fsk', label: 'File Share Key'},
-                    {key: 'ctime', label: 'Collection Time', class: 'text-center'},
-                    {key: 'actions', label: 'Actions'},
+                    {key: 'filename', label: '文件名'},
+                    {key: 'fsk', label: '文件共享码'},
+                    {key: 'ctime', label: '收藏时间', class: 'text-center'},
+                    {key: 'actions', label: '操作'},
                 ],
                 //分页相关
                 pagination: {

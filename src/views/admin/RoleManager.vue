@@ -10,12 +10,12 @@
                                     <div class="row align-items-center">
                                         <div class="col">
                                             <b-button type="button" variant="primary" class="mr-2" @click="show">
-                                                <i class="fas fa-cloud-upload-alt"></i> New Role
+                                                <i class="fas fa-cloud-upload-alt"></i> 新规则
                                             </b-button>
                                         </div>
                                         <div class="col text-right">
                                             <b-button type="button" variant="primary" @click="refresh">
-                                                <i class="fas fa-sync-alt"></i> Refresh
+                                                <i class="fas fa-sync-alt"></i> 刷新
                                             </b-button>
                                         </div>
                                     </div>
@@ -49,11 +49,11 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="edit" href="javascript:void(0)" title="edit"
+                                                <a class="edit" href="javascript:void(0)" title="修改"
                                                    @click="update(row.item)">
                                                     <i class="fas fa-pen-square"></i>
                                                 </a>
-                                                <a class="remove" href="javascript:void(0)" title="Remove"
+                                                <a class="remove" href="javascript:void(0)" title="删除"
                                                    @click="remove(row.item.id)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
@@ -68,19 +68,19 @@
                 </b-container>
             </div>
         </main>
-        <b-modal id="new-role" centered title="New Role" hide-footer hide-header-close>
-            <b-form-input v-model="role.name" placeholder="Enter Role Name" class="mb-2"></b-form-input>
+        <b-modal id="new-role" centered title="新规则" hide-footer hide-header-close>
+            <b-form-input v-model="role.name" placeholder="规则名称" class="mb-2"></b-form-input>
             <b-form-select v-model="role.rule" :options="options" class="mb-2"></b-form-select>
             <b-form-textarea
                     id="textarea"
                     v-model="role.explain"
-                    placeholder="Enter rule description..."
+                    placeholder="输入规则描述..."
                     rows="3"
                     max-rows="6"
             ></b-form-textarea>
             <div class="mt-2"></div>
-            <b-button @click="create" class="mr-2" variant="primary">Submit</b-button>
-            <b-button @click="clear" variant="danger">Reset</b-button>
+            <b-button @click="create" class="mr-2" variant="primary">提交</b-button>
+            <b-button @click="clear" variant="danger">重置</b-button>
             <div v-if="show_message !== ''" class="mt-2">
                 <b-alert
                         :show="dismissCountDown"
@@ -95,26 +95,26 @@
         </b-modal>
         <b-modal id="remove-role" hide-footer centered>
             <template v-slot:modal-title>
-                Confirm <code>delete</code> ?
+                确认 <code>删除</code> ?
             </template>
             <div class="d-block text-center">
-                <h3>After confirming the deletion, the group information will be unrecoverable. Are you sure?</h3>
+                <h3>确认后，角色将不可恢复. 是否确定?</h3>
             </div>
-            <b-button class="mt-3" block @click="sureRemove" variant="danger">I'm sure!</b-button>
+            <b-button class="mt-3" block @click="sureRemove" variant="danger">确定!</b-button>
         </b-modal>
-        <b-modal id="update-role" centered title="Update Role" hide-footer hide-header-close>
-            <b-form-input v-model="role.name" placeholder="Enter Role Name" class="mb-2"></b-form-input>
+        <b-modal id="update-role" centered title="修改规则" hide-footer hide-header-close>
+            <b-form-input v-model="role.name" placeholder="规则" class="mb-2"></b-form-input>
             <b-form-select v-model="role.rule" :options="options" class="mb-2"></b-form-select>
             <b-form-textarea
                     id="textarea"
                     v-model="role.explain"
-                    placeholder="Enter rule description..."
+                    placeholder="输入规则描述..."
                     rows="3"
                     max-rows="6"
             ></b-form-textarea>
             <div class="mt-2"></div>
-            <b-button @click="sureUpdate" class="mr-2" variant="primary">Submit</b-button>
-            <b-button @click="clear" variant="danger">Reset</b-button>
+            <b-button @click="sureUpdate" class="mr-2" variant="primary">提交</b-button>
+            <b-button @click="clear" variant="danger">重置</b-button>
             <div v-if="show_message !== ''" class="mt-2">
                 <b-alert
                         :show="dismissCountDown"
@@ -149,10 +149,10 @@
                 },
                 items: [],
                 fields: [
-                    {key: 'name', label: 'Name'},
-                    {key: 'effect', label: 'Rule'},
-                    {key: 'explain', label: 'Explain'},
-                    {key: 'actions', label: 'Actions'},
+                    {key: 'name', label: '规则名'},
+                    {key: 'effect', label: '规则'},
+                    {key: 'explain', label: '描述'},
+                    {key: 'actions', label: '操作'},
                 ],
                 options: [
                     {value: null, text: 'Please select an storage rules'},

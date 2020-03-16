@@ -9,7 +9,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h4>User Manager</h4>
+                                            <h4>用户管理</h4>
                                         </div>
                                         <div class="col">
                                             <b-input-group size="sm">
@@ -17,14 +17,14 @@
                                                         v-model="filter"
                                                         type="search"
                                                         id="filterInput"
-                                                        placeholder="Search ..."
+                                                        placeholder="搜索 ..."
                                                         class="filterInput"
                                                 ></b-form-input>
                                                 <b-input-group-append>
-                                                    <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                                                    <b-button :disabled="!filter" @click="filter = ''">清空</b-button>
                                                 </b-input-group-append>
                                                 <b-button type="button" variant="primary" class="ml-2">
-                                                    <i class="fas fa-sync-alt"></i> Refresh
+                                                    <i class="fas fa-sync-alt"></i> 刷新
                                                 </b-button>
                                             </b-input-group>
                                         </div>
@@ -67,10 +67,10 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="ban" href="javascript:void(0)" title="ban" @click="ban(row.item)">
+                                                <a class="ban" href="javascript:void(0)" title="封禁用户" @click="ban(row.item)">
                                                     <i class="fas fa-ban"></i>
                                                 </a>
-                                                <a class="group" href="javascript:void(0)" title="group" @click="group(row.item)">
+                                                <a class="group" href="javascript:void(0)" title="修改组" @click="group(row.item)">
                                                     <i class="fas fa-user-friends"></i>
                                                 </a>
                                             </div>
@@ -94,17 +94,17 @@
         </main>
         <b-modal id="ban-user" centered title="Disabled User" hide-footer hide-header-close>
             <div v-if="current_user.status">
-                The user will be disabled, are you sure?
-                <b-button variant="danger" @click="sure">Sure</b-button>
+                用户将被禁用，是否确定?
+                <b-button variant="danger" @click="sure">确定</b-button>
             </div>
             <div v-else>
-                The user has been disabled. Are you sure you want to restore?
-                <b-button variant="danger" @click="sure">Restore</b-button>
+                用户已被禁用，是否恢复?
+                <b-button variant="danger" @click="sure">恢复</b-button>
             </div>
         </b-modal>
-        <b-modal id="choose-group" centered title="Change Group" hide-footer hide-header-close>
+        <b-modal id="choose-group" centered title="修改组" hide-footer hide-header-close>
             <b-form-select v-model="group_rule" text-field="name" value-field="rule" :options="group_list" class="mb-2"></b-form-select>
-            <b-button @click="sureGroup" class="mt-2" variant="primary">Submit</b-button>
+            <b-button @click="sureGroup" class="mt-2" variant="primary">提交</b-button>
         </b-modal>
     </div>
 </template>
@@ -118,10 +118,10 @@
                 group_rule: null,
                 user_list: [],
                 fields: [
-                    {key: 'username', label: 'Username'},
-                    {key: 'email', label: 'Email'},
-                    {key: 'create_time', label: 'Create Time', class: 'text-center'},
-                    {key: 'actions', label: 'Actions'},
+                    {key: 'username', label: '用户名'},
+                    {key: 'email', label: '邮箱'},
+                    {key: 'create_time', label: '创建时间', class: 'text-center'},
+                    {key: 'actions', label: '操作'},
                 ],
                 group_list: [],
                 pagination: {

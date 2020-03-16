@@ -5,7 +5,7 @@
                 <div class="row dash-row">
                     <b-col sm="12" md="8" lg="4" xl="4" offset-md="2" offset-lg="4" offset-xl="4">
                         <div class="stats stats-primary">
-                            <h3 class="stats-title"> Usage </h3>
+                            <h3 class="stats-title"> 使用情况 </h3>
                             <div class="stats-content">
                                 <div class="stats-icon">
                                     <i class="fas fa-box"></i>
@@ -22,7 +22,7 @@
                                     </div>
                                     <div class="stats-change">
                                         <span class="stats-percentage">-{{((storage_ratio.used_size / storage_ratio.total_size) * 100).toFixed(2)}}%</span>
-                                        <span class="stats-timeframe">Used ratio</span>
+                                        <span class="stats-timeframe">使用率</span>
                                     </div>
                                 </div>
                             </div>
@@ -37,18 +37,18 @@
                                     <div class="row align-items-center">
                                         <div class="col">
                                             <b-button type="button" variant="primary" class="mr-2" v-b-modal.upload>
-                                                <i class="fas fa-cloud-upload-alt"></i> Upload
+                                                <i class="fas fa-cloud-upload-alt"></i> 上传
                                             </b-button>
                                             <b-button type="button" variant="primary" class="mr-2" v-b-modal.mkdir>
-                                                <i class="fas fa-folder-plus"></i> Mkdir
+                                                <i class="fas fa-folder-plus"></i> 创建目录
                                             </b-button>
                                             <b-button v-if="move_file_id !== ''" type="button" variant="primary" @click="pasteFile">
-                                                <i class="fas fa-paste"></i> Paste
+                                                <i class="fas fa-paste"></i> 粘贴
                                             </b-button>
                                         </div>
                                         <div class="col text-right">
                                             <b-button type="button" variant="primary" @click="refresh">
-                                                <i class="fas fa-sync-alt"></i> Refresh
+                                                <i class="fas fa-sync-alt"></i> 刷新
                                             </b-button>
                                         </div>
                                     </div>
@@ -122,23 +122,23 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style text-primary">
-                                                <a class="share" title="share" @click="shareFile(row.item)">
+                                                <a class="share" title="共享" @click="shareFile(row.item)">
                                                     <i class="fas fa-share-alt-square"></i>
                                                 </a>
-                                                <a class="edit" title="edit" @click="renameFile(row.item.id)">
+                                                <a class="edit" title="重命名" @click="renameFile(row.item.id)">
                                                     <i class="fas fa-pen-square"></i>
                                                 </a>
-                                                <a class="move" title="move" @click="moveFile(row.item.id)">
+                                                <a class="move" title="移动" @click="moveFile(row.item.id)">
                                                     <i class="fas fa-arrows-alt"></i>
                                                 </a>
-                                                <a class="remove" title="remove" @click="removeFile(row.item)">
+                                                <a class="remove" title="删除" @click="removeFile(row.item)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                                 <span v-if="!row.item.isDir">
-                                                    <a class="download" @click="previewFile(row.item)" title="view">
+                                                    <a class="download" @click="previewFile(row.item)" title="预览">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a class="download" :href="downloadFile(row.item)" title="download">
+                                                    <a class="download" :href="downloadFile(row.item)" title="下载">
                                                         <i class="fas fa-arrow-circle-down"></i>
                                                     </a>
                                                 </span>
@@ -161,11 +161,11 @@
                 </b-container>
             </div>
         </main>
-        <b-modal id="upload" centered title="Upload" hide-footer hide-header-close>
+        <b-modal id="upload" centered title="上传" hide-footer hide-header-close>
             <div>
                 <b-form-file v-model="file.current_file" ref="file-input" class="mb-2"></b-form-file>
-                <b-button @click="uploadFile" class="mr-2" variant="primary">Upload</b-button>
-                <b-button @click="resetUpload" variant="danger">Reset</b-button>
+                <b-button @click="uploadFile" class="mr-2" variant="primary">上传</b-button>
+                <b-button @click="resetUpload" variant="danger">重置</b-button>
             </div>
             <div v-if="file.show_progress" class="pt-3">
                 <b-progress :value="file.progress_rate" :max="file.progress_max" show-progress animated></b-progress>
@@ -182,11 +182,11 @@
                 </b-alert>
             </div>
         </b-modal>
-        <b-modal id="mkdir" centered title="Create Directory" hide-footer hide-header-close>
-            <b-form-input v-model="file.directory_name" placeholder="Enter Directory Name"></b-form-input>
+        <b-modal id="mkdir" centered title="创建目录" hide-footer hide-header-close>
+            <b-form-input v-model="file.directory_name" placeholder="新名称"></b-form-input>
             <div class="mt-2"></div>
-            <b-button @click="createDir" class="mr-2" variant="primary">Submit</b-button>
-            <b-button @click="file.directory_name = ''" variant="danger">Reset</b-button>
+            <b-button @click="createDir" class="mr-2" variant="primary">创建</b-button>
+            <b-button @click="file.directory_name = ''" variant="danger">重置</b-button>
             <div v-if="file.show_message !== ''">
                 <b-alert
                         :show="file.dismissCountDown"
@@ -201,8 +201,8 @@
         </b-modal>
         <rename :id="file.fid" :user="user"></rename>
         <share :id="file.fid" :user="user" @share2Refresh="refresh"></share>
-        <b-modal id="file-isShare" centered title="Warning" hide-footer hide-header-close>
-            The file has been shared, you don't need to operate any more
+        <b-modal id="file-isShare" centered title="提示" hide-footer hide-header-close>
+            这个文件已被共享，你不需要执行任何操作！
         </b-modal>
         <preview :type="preview.fileType" :source="preview.source"></preview>
         <remove :file="removeFileObject" :user="user" @remove2Refresh="refresh"></remove>
@@ -249,10 +249,10 @@
                 // 某文件夹中的数据列表
                 items: [],
                 fields: [
-                    {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size', sortable: true},
-                    {key: 'uptime', label: 'Update Time', class: 'text-center', sortable: true},
-                    {key: 'actions', label: 'Actions'},
+                    {key: 'filename', label: '文件名'},
+                    {key: 'size', label: '大小', sortable: true},
+                    {key: 'uptime', label: '上传时间', class: 'text-center', sortable: true},
+                    {key: 'actions', label: '操作'},
                 ],
                 pagination: {
                     perPage: 15,
@@ -536,7 +536,7 @@
             },
             getNowPathID(id) {
                 this.now_path_id = id;
-                this.path_items.push({text: 'All File', id: id})
+                this.path_items.push({text: '所有文件', id: id})
             },
             getRoot() {
                 let headers = {

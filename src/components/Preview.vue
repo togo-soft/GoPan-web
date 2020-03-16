@@ -1,20 +1,20 @@
 <template>
     <div class="preview">
         <div v-if="type.result === 'image'">
-            <b-modal id="file-preview" centered scrollable title="View" hide-footer>
+            <b-modal id="file-preview" centered scrollable title="预览" hide-footer>
                 <b-img fluid-grow :src="source" alt="Image Preview"></b-img>
             </b-modal>
         </div>
         <div v-else-if="type.result === 'pdf'">
-            <b-modal id="file-preview" centered scrollable size="xl" title="View" hide-footer>
+            <b-modal id="file-preview" centered scrollable size="xl" title="预览" hide-footer>
                 <template v-slot:modal-header="{ close }">
 
                     <b-button variant="outline-primary" @click="changePdfPage(0)" class="turn"
-                              :class="{grey: currentPage==1}">Preview
+                              :class="{grey: currentPage==1}">前一页
                     </b-button>
                     {{currentPage}} / {{pageCount}}
                     <b-button variant="outline-primary" @click="changePdfPage(1)" class="turn"
-                              :class="{grey: currentPage==pageCount}">Next
+                              :class="{grey: currentPage==pageCount}">下一页
                     </b-button>
                 </template>
                 <template v-slot:default>
@@ -27,14 +27,14 @@
             </b-modal>
         </div>
         <div v-else-if="type.result === 'excel'">
-            <b-modal id="file-preview" centered scrollable size="xl" title="View" hide-footer>
+            <b-modal id="file-preview" centered scrollable size="xl" title="预览" hide-footer>
                 <template v-slot:default>
                     <div v-html="excel2html()" class="table-style"></div>
                 </template>
             </b-modal>
         </div>
         <div v-else-if="type.result === 'video'">
-            <b-modal id="file-preview" centered scrollable title="View" hide-footer>
+            <b-modal id="file-preview" centered scrollable title="预览" hide-footer>
                 <b-embed
                         type="iframe"
                         aspect="16by9"
@@ -44,12 +44,12 @@
             </b-modal>
         </div>
         <div v-else-if="type.result === 'radio'">
-            <b-modal id="file-preview" centered scrollable title="View" hide-footer>
+            <b-modal id="file-preview" centered scrollable title="预览" hide-footer>
                 <audio :src="source" controls="controls"></audio>
             </b-modal>
         </div>
         <div v-else-if="type.result === 'code'">
-            <b-modal id="file-preview" centered scrollable size="lg" title="View" hide-footer>
+            <b-modal id="file-preview" centered scrollable size="lg" title="预览" hide-footer>
                 <template v-slot:default>
                     <pre v-highlightjs="getContent()">
                     <code :class="type.suffix"></code>
@@ -58,7 +58,7 @@
             </b-modal>
         </div>
         <div v-else>
-            <b-modal id="file-preview" centered scrollable title="View" hide-footer>
+            <b-modal id="file-preview" centered scrollable title="预览" hide-footer>
                 <template v-slot:default>
                     <p class="text-danger"> 当前格式不支持预览!</p>
                 </template>

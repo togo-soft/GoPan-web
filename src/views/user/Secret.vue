@@ -10,12 +10,12 @@
                                     <div class="row align-items-center">
                                         <div class="col">
                                             <b-button type="button" variant="primary" class="mr-2" @click="uploadModal">
-                                                <i class="fas fa-cloud-upload-alt"></i> Upload
+                                                <i class="fas fa-cloud-upload-alt"></i> 上传
                                             </b-button>
                                         </div>
                                         <div class="col text-right">
                                             <b-button type="button" variant="primary" @click="refresh">
-                                                <i class="fas fa-sync-alt"></i> Refresh
+                                                <i class="fas fa-sync-alt"></i> 刷新
                                             </b-button>
                                         </div>
                                     </div>
@@ -67,14 +67,14 @@
 
                                         <template v-slot:cell(actions)="row">
                                             <div class="field-style">
-                                                <a class="edit" href="javascript:void(0)" title="edit" @click="renameFile(row.item)">
+                                                <a class="edit" href="javascript:void(0)" title="重命名" @click="renameFile(row.item)">
                                                     <i class="fas fa-pen-square"></i>
                                                 </a>
-                                                <a class="download" href="javascript:void(0)" title="download"
+                                                <a class="download" href="javascript:void(0)" title="下载"
                                                    @click="downloadFile(row.item)">
                                                     <i class="fas fa-arrow-circle-down"></i>
                                                 </a>
-                                                <a class="remove" href="javascript:void(0)" title="Remove" @click="deleteFile(row.item)">
+                                                <a class="remove" href="javascript:void(0)" title="删除" @click="deleteFile(row.item)">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </div>
@@ -96,11 +96,11 @@
                 </b-container>
             </b-col>
         </b-row>
-        <b-modal id="secret-upload" centered title="Upload" hide-footer hide-header-close>
+        <b-modal id="secret-upload" centered title="上传" hide-footer hide-header-close>
             <div>
                 <b-form-file v-model="current_file" ref="file-input" class="mb-2"></b-form-file>
-                <b-button @click="uploadFile" class="mr-2" variant="primary">Upload</b-button>
-                <b-button @click="resetUpload" variant="danger">Reset</b-button>
+                <b-button @click="uploadFile" class="mr-2" variant="primary">上传</b-button>
+                <b-button @click="resetUpload" variant="danger">重置</b-button>
             </div>
             <div v-if="show_progress" class="pt-3">
                 <b-progress :value="progress_rate" :max="progress_max" show-progress animated></b-progress>
@@ -119,18 +119,18 @@
         </b-modal>
         <b-modal id="secret-file-remove" hide-footer centered>
             <template v-slot:modal-title>
-                Confirm <code>delete</code> ?
+                确认 <code>删除</code> ?
             </template>
             <div class="d-block text-center">
-                <h3>After confirming the deletion, the file will be unrecoverable. Are you sure?</h3>
+                <h3>确认之后，文件将无法找回. 仍然确定?</h3>
             </div>
-            <b-button class="mt-3" block @click="realDeleteFile" variant="danger">I'm sure!</b-button>
+            <b-button class="mt-3" block @click="realDeleteFile" variant="danger">确定!</b-button>
         </b-modal>
-        <b-modal id="secret-file-rename" centered title="Rename" hide-footer hide-header-close>
-            <b-form-input v-model="rename_file" placeholder="Enter Directory Name"></b-form-input>
+        <b-modal id="secret-file-rename" centered title="重命名" hide-footer hide-header-close>
+            <b-form-input v-model="rename_file" placeholder="新名称"></b-form-input>
             <div class="mt-2"></div>
-            <b-button @click="realRenameFile" class="mr-2" variant="primary">Submit</b-button>
-            <b-button @click="rename_file = ''" variant="danger">Reset</b-button>
+            <b-button @click="realRenameFile" class="mr-2" variant="primary">提交</b-button>
+            <b-button @click="rename_file = ''" variant="danger">重置</b-button>
         </b-modal>
     </b-container>
 </template>
@@ -178,10 +178,10 @@
                 pid: '',//加密目录的ID 加密文件全记录在此
                 items: [],
                 fields: [
-                    {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size', sortable: true},
-                    {key: 'uptime', label: 'Update Time', class: 'text-center', sortable: true},
-                    {key: 'actions', label: 'Actions'},
+                    {key: 'filename', label: '文件名'},
+                    {key: 'size', label: '大小', sortable: true},
+                    {key: 'uptime', label: '上传时间', class: 'text-center', sortable: true},
+                    {key: 'actions', label: '操作'},
                 ],
             }
         },

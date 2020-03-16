@@ -7,24 +7,24 @@
                         <div class="spur-card-icon">
                             <i class="fas fa-chart-bar"></i>
                         </div>
-                        <div class="spur-card-title"> Account Form </div>
+                        <div class="spur-card-title"> 账户信息 </div>
                     </div>
                     <div class="card-body ">
                         <form>
                             <div class="form-group">
-                                <label for="Username">Username</label>
+                                <label for="Username">用户名</label>
                                 <input type="text" class="form-control" id="Username" v-model="uinfo.username" readonly>
                             </div>
                             <div class="form-group">
-                                <label for="Email">Email address</label>
+                                <label for="Email">Email 地址</label>
                                 <input type="email" class="form-control" id="Email" v-model="uinfo.email" placeholder="name@example.com">
                             </div>
                             <div class="form-group">
-                                <label for="Phone">Phone</label>
+                                <label for="Phone">手机号</label>
                                 <input type="text" class="form-control" id="Phone" v-model="uinfo.phone" placeholder="13888888888">
                             </div>
                             <div class="form-group">
-                                <label for="Password">Password</label>
+                                <label for="Password">密码</label>
                                 <input type="password" class="form-control" id="Password" v-model="uinfo.password" placeholder="new password">
                             </div>
                             <button type="button" class="btn btn-primary" @click="profile">Submit</button>

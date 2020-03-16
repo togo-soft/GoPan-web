@@ -5,7 +5,7 @@
                 <div class="row dash-row">
                     <b-col sm="12" md="8" lg="4" xl="4" offset-md="2" offset-lg="4" offset-xl="4">
                         <div class="stats stats-primary">
-                            <h3 class="stats-title"> Usage </h3>
+                            <h3 class="stats-title"> 使用量 </h3>
                             <div class="stats-content">
                                 <div class="stats-icon">
                                     <i class="fas fa-box"></i>
@@ -29,15 +29,15 @@
                                     <div class="spur-card-icon">
                                         <i class="fas fa-chart-bar"></i>
                                     </div>
-                                    <div class="spur-card-title"> Recently uploaded statistics</div>
+                                    <div class="spur-card-title"> 最近上传统计</div>
                                 </div>
                                 <div class="card-body ">
                                     <table class="table table-striped table-in-card">
                                         <thead>
                                         <tr>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Count</th>
-                                            <th scope="col">Size</th>
+                                            <th scope="col">时间</th>
+                                            <th scope="col">数量</th>
+                                            <th scope="col">大小</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -58,7 +58,7 @@
                                     <div class="spur-card-icon">
                                         <i class="fas fa-ellipsis-h"></i>
                                     </div>
-                                    <div class="spur-card-title"> Cluster operation</div>
+                                    <div class="spur-card-title"> 集群操作</div>
                                 </div>
                                 <div class="card-body ">
                                     <b-alert
@@ -70,8 +70,8 @@
                                     >
                                         {{warningMessage}}
                                     </b-alert>
-                                    <b-jumbotron lead="Click to start manual cluster synchronization.">
-                                        <b-button variant="primary" class="mr-2 mb-2" @click="repair_sync">Repair</b-button>
+                                    <b-jumbotron lead="单击此处开始手动群集同步.">
+                                        <b-button variant="primary" class="mr-2 mb-2" @click="repair_sync">修复</b-button>
                                     </b-jumbotron>
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                     <div class="spur-card-icon">
                                         <i class="fas fa-envelope"></i>
                                     </div>
-                                    <div class="spur-card-title"> Mail configuration</div>
+                                    <div class="spur-card-title"> 邮件配置</div>
                                 </div>
                                 <div class="card-body ">
                                     <b-alert
@@ -134,7 +134,7 @@
                                         <b-form-input placeholder="e.g: zhangsan@163.com" v-model="email.recv"></b-form-input>
                                     </b-form-group>
 
-                                    <b-button variant="primary" @click="setEmail">Submit</b-button>
+                                    <b-button variant="primary" @click="setEmail">提交</b-button>
                                 </div>
                             </div>
                         </b-col>

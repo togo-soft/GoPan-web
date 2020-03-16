@@ -4,7 +4,7 @@
             <b-row class="dash-row">
                 <b-col xl="6" lg="6" md="12" sm="12">
                     <div class="stats stats-primary">
-                        <h3 class="stats-title"> Sign ups </h3>
+                        <h3 class="stats-title"> 会员注册数 </h3>
                         <div class="stats-content">
                             <div class="stats-icon">
                                 <i class="fas fa-user"></i>
@@ -17,7 +17,7 @@
                 </b-col>
                 <b-col xl="6" lg="6" md="12" sm="12">
                     <div class="stats stats-success">
-                        <h3 class="stats-title"> Usage </h3>
+                        <h3 class="stats-title"> 磁盘使用量 </h3>
                         <div class="stats-content">
                             <div class="stats-icon">
                                 <i class="fas fa-box"></i>
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="stats-change">
                                     <span class="stats-percentage">{{file_count}}</span>
-                                    <span class="stats-timeframe">files uploaded</span>
+                                    <span class="stats-timeframe">个文件</span>
                                 </div>
                             </div>
                         </div>

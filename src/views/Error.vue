@@ -15,28 +15,11 @@
                                         <b-card-text class="mt-4">
                                             {{message}}
                                         </b-card-text>
-<!--                                        <b-card-text>A second paragraph of text in the card.</b-card-text>-->
-
-<!--                                        <a href="#" class="card-link">Card link</a>-->
-<!--                                        <b-link href="#" class="card-link">Another link</b-link>-->
                                     </b-card>
-<!--                                    <h3 class="mt-2">What's going on?</h3>-->
-
-<!--                                    <li>Authentication failed</li>-->
-<!--                                    <li>Server failure</li>-->
-<!--                                    <li>Page or request resource does not exist</li>-->
-
-<!--                                    <h3 class="mt-2">What to do now:</h3>-->
-
-<!--                                    <li>If you've typed in the URL manually, make sure you've spelled it-->
-<!--                                        correctly-->
-<!--                                    </li>-->
-<!--                                    <li>Try to log in again</li>-->
-<!--                                    <li>Waiting for me to handle the server failure</li>-->
 
                                     <div class="mt-5">
                                         <button class="btn btn-primary btn-lg" @click="back">
-                                            Back To Home
+                                            回首页
                                         </button>
                                     </div>
                                 </div>

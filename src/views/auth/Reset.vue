@@ -11,22 +11,22 @@
             </b-alert>
         </div>
         <div class="card-body">
-            <h4 class="card-title">Reset Password</h4>
+            <h4 class="card-title">重置密码</h4>
             <form role="form">
                 <b-form-group
-                        label="New Password"
+                        label="新密码"
                         description=" Make sure your password is strong and easy to remember."
                 >
                     <b-form-input id="password" v-model="user.password" required autofocus type="password"></b-form-input>
                 </b-form-group>
 
-                <b-form-group label="Re Password">
+                <b-form-group label="确认密码">
                     <b-form-input id="repassword" v-model="user.repassword" required type="password"></b-form-input>
                 </b-form-group>
 
                 <div class="form-group m-0">
                     <button type="button" class="btn btn-primary btn-block" @click="reset">
-                        Reset Password
+                        重置密码
                     </button>
                 </div>
             </form>
@@ -52,12 +52,12 @@
             reset() {
                 //如果UUID失效 不能修改密码
                 if(this.invalid) {
-                    this.warningMessage = 'code invalid!';
+                    this.warningMessage = '链接失效!';
                     return;
                 }
                 //检测输入项是否为空
                 if (this.user.password === "" || this.user.repassword === "") {
-                    this.warningMessage = 'Input options cannot be empty!';
+                    this.warningMessage = '输入项不能为空!';
                     return;
                 }
                 //开始发送重置密码请求

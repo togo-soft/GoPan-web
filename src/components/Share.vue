@@ -2,12 +2,12 @@
     <div class="share">
         <b-modal id="file-share" hide-footer centered>
             <template v-slot:modal-title>
-                Confirm <code>Share</code> ?
+                确定 <code>共享</code> ?
             </template>
             <div class="d-block text-center">
-                <h3>After sharing, your privacy may be exposed. Are you sure?</h3>
+                <h3>确认后，你的文件私密性将无法保障. 你确定吗?</h3>
             </div>
-            <b-button class="mt-3" block @click="share" variant="danger">I'm sure!</b-button>
+            <b-button class="mt-3" block @click="share" variant="danger">确定!</b-button>
         </b-modal>
 
     </div>

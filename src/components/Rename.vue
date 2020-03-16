@@ -1,10 +1,10 @@
 <template>
     <div class="rename">
-        <b-modal id="file-rename" centered title="Rename" hide-footer hide-header-close>
-            <b-form-input v-model="dirname" placeholder="Enter Directory Name"></b-form-input>
+        <b-modal id="file-rename" centered title="重命名" hide-footer hide-header-close>
+            <b-form-input v-model="dirname" placeholder="新名称"></b-form-input>
             <div class="mt-2"></div>
-            <b-button @click="rename" class="mr-2" variant="primary">Submit</b-button>
-            <b-button @click="dirname = ''" variant="danger">Reset</b-button>
+            <b-button @click="rename" class="mr-2" variant="primary">提交</b-button>
+            <b-button @click="dirname = ''" variant="danger">重置</b-button>
         </b-modal>
 
     </div>

@@ -10,15 +10,15 @@
             {{warningMessage}}
         </b-alert>
         <div class="card-body">
-            <h4 class="card-title">Login</h4>
+            <h4 class="card-title">登录</h4>
             <form role="form">
-                <b-form-group label="Username">
+                <b-form-group label="用户名">
                     <b-form-input id="username" v-model="user.username" trim required autofocus></b-form-input>
                 </b-form-group>
                 <b-form-group>
-                    <label>Password
+                    <label>密码
                         <router-link :to="{name:'forgot'}" class="float-right">
-                            Forgot Password?
+                            忘记密码?
                         </router-link>
                     </label>
                     <b-form-input id="password" type="password" v-model="user.password" required></b-form-input>
@@ -31,16 +31,16 @@
                             value="true"
                             unchecked-value="false"
                     >
-                        <span v-b-tooltip.hover title="Checking this option will always log in status">Remember Me</span>
+                        <span v-b-tooltip.hover title="Checking this option will always log in status">记住我</span>
                     </b-form-checkbox>
                 </div>
                 <div class="form-group m-0">
                     <button type="button" class="btn btn-primary btn-block" @click="signIn">
-                        Login
+                        登录
                     </button>
                 </div>
                 <div class="mt-4 text-center">
-                    Don't have an account? <router-link :to="{name:'register'}">Create One</router-link>
+                    没有账号? <router-link :to="{name:'register'}">创建</router-link>
                 </div>
             </form>
         </div>
@@ -71,7 +71,7 @@
                 //检测输入项是否为空
                 if (this.user.username === "" || this.user.password === "") {
                     this.dismissCountDown = this.dismissSecs;
-                    this.warningMessage = 'Input options cannot be empty!';
+                    this.warningMessage = '输入项不能为空!';
                     return;
                 }
                 //开始登陆请求

@@ -7,20 +7,20 @@
                         <b-img src="img/logo.png" fluid alt="logo"></b-img>
                         <div class="intro-text">
                             <span class="subtitle">Cloud Disk</span>
-                            <span class="describe">GoPan is a campus network disk system based on Go + Vue.</span>
+                            <span class="describe">GoPan 是一个基于 Go + Vue 构建的校园网盘系统.</span>
                         </div>
                     </b-col>
                     <b-col v-if="!isLogin" lg="12" class="own-btn">
                         <router-link :to="{name:'login'}" class="btn btn-lg btn-outline">
-                            Sign in
+                            登录
                         </router-link>
                         <router-link :to="{name:'register'}" class="btn btn-lg btn-outline">
-                            Sign up
+                            注册
                         </router-link>
                     </b-col>
                     <b-col v-else lg="12" class="own-btn">
                         <router-link :to="{name:'dashboard'}" class="btn btn-lg btn-outline">
-                            Dashboard
+                            控制台
                         </router-link>
                     </b-col>
                 </b-row>
@@ -34,69 +34,67 @@
         <main class="mb-4 main-container">
             <b-container>
                 <h2 class="text-center">
-                    Search for shared files
+                    查询共享文件
                 </h2>
                 <b-row>
                     <b-col xl="6" lg="6" md="12" sm="12" offset-xl="3" offset-lg="3">
-                        <b-form-input v-model="fsk" placeholder="Enter file sign"></b-form-input>
+                        <b-form-input v-model="fsk" placeholder="输入文件共享码"></b-form-input>
                     </b-col>
                 </b-row>
                 <div class="text-center mt-3">
-                    <b-button variant="primary" @click="find">find</b-button>
+                    <b-button variant="primary" @click="find">查询</b-button>
                 </div>
             </b-container>
             <b-container fluid class="mt-5">
                 <h2 class="text-center">
-                    Getting Started
+                    构建系统
                 </h2>
                 <b-row>
                     <b-col xl="6" lg="6" md="12" sm="12" offset-xl="3" offset-lg="3">
-                        <div class="intro-text intro-dev">Get started with GoPan, based on the world's most popular
-                            development model - Golang + Vue, for building responsive, highly concurrent sites.
+                        <div class="intro-text intro-dev">GoPan 基于流行的开发模式 Golang + Vue 进行开发, 构建响应式, 高并发的站点.
                         </div>
                         <div>
                             <h3 class="text-center">
-                                Technology stack
+                                技术栈
                             </h3>
                             <b-row>
                                 <b-col xl="6" lg="6" md="6" sm="12" offset-xl="3" offset-lg="3" offset-md="3">
                                     <div>
                                         <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue.js</a> <code
-                                            translate="translate" class="text-nowrap">v2.6</code> is required, Use <a href="https://getbootstrap.com/" target="_blank" rel="noopener">Bootstrap4</a> as the default UI
+                                            translate="translate" class="text-nowrap">v2.6</code> 被依赖, 使用 <a href="https://getbootstrap.com/" target="_blank" rel="noopener">Bootstrap4</a> 作为默认 UI
                                     </div>
 
                                     <div>
                                         <a href="https://golang.org/" target="_blank"
                                            rel="noopener">Golang</a> <code translate="translate"
-                                                                              class="text-nowrap">v1.11</code> is
-                                        required, used to build the server.
+                                                                              class="text-nowrap">v1.11</code> 被依赖, 用来构建服务端.
                                     </div>
 
                                     <div>
-                                        <a href="https://www.mysql.com/" target="_blank" rel="noopener">MySQL</a> is
-                                        <strong>required</strong>
+                                        <a href="https://github.com/sjqzhang/go-fastdfs/" target="_blank" rel="noopener">go-fastdfs</a> 被
+                                        <strong>依赖</strong>, 作为存储端.
                                     </div>
 
                                     <div>
-                                        <a href="https://www.mongodb.com/" target="_blank" rel="noopener">MongoDB</a> is
-                                        <strong>required</strong>
+                                        <a href="https://www.mysql.com/" target="_blank" rel="noopener">MySQL</a> 被
+                                        <strong>依赖</strong>
                                     </div>
 
                                     <div>
-                                        <a href="https://redis.io/" target="_blank" rel="noopener">Redis</a> is
-                                        <strong>required</strong>
+                                        <a href="https://www.mongodb.com/" target="_blank" rel="noopener">MongoDB</a> 被
+                                        <strong>依赖</strong>
                                     </div>
 
                                     <div>
-                                        <a href="https://github.com/sjqzhang/go-fastdfs/" target="_blank" rel="noopener">go-fastdfs</a> is
-                                        <strong>required</strong>
+                                        <a href="https://redis.io/" target="_blank" rel="noopener">Redis</a> 被
+                                        <strong>依赖</strong>
                                     </div>
                                 </b-col>
                             </b-row>
                         </div>
                         <div>
                             <h3 class="text-center mt-2">
-                                deploy
+                                部署
                             </h3>
                             <b-row>
                                 <b-col xl="6" lg="6" md="6" sm="12" offset-xl="3" offset-lg="3" offset-md="3">
