@@ -9,7 +9,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h4>用户管理</h4>
+                                            <h4>用户行为日志管理</h4>
                                         </div>
                                         <div class="col">
                                             <b-input-group size="sm">
@@ -32,11 +32,11 @@
                                 </div>
                                 <div class="table-responsive">
                                     <b-table
-                                            id="user-list"
+                                            id="user-log-list"
                                             show-empty
                                             small
                                             stacked="md"
-                                            :items="user_list"
+                                            :items="log_list"
                                             :fields="fields"
                                             :filter="filter"
                                             table-class="table-style"
@@ -65,23 +65,6 @@
                                             </div>
                                         </template>
 
-                                        <template v-slot:cell(actions)="row">
-                                            <div class="field-style">
-                                                <a class="ban" href="javascript:void(0)" title="封禁用户" @click="ban(row.item)">
-                                                    <i class="fas fa-ban"></i>
-                                                </a>
-                                                <a class="group" href="javascript:void(0)" title="修改组" @click="group(row.item)">
-                                                    <i class="fas fa-user-friends"></i>
-                                                </a>
-                                                <a class="group" href="javascript:void(0)" title="重置密码" @click="resetPassword(row.item)">
-                                                    <i class="fas fa-redo"></i>
-                                                </a>
-                                                <a class="group" href="javascript:void(0)" title="详细信息" @click="userDetailInfo(row.item)">
-                                                    <i class="fas fa-info"></i>
-                                                </a>
-                                            </div>
-                                        </template>
-
                                     </b-table>
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
@@ -89,7 +72,7 @@
                                             v-model="pagination.currentPage"
                                             :total-rows="rows"
                                             :per-page="pagination.perPage"
-                                            aria-controls="user-list"
+                                            aria-controls="user-log-list"
                                     ></b-pagination>
                                 </div>
                             </div>
@@ -98,29 +81,6 @@
                 </b-container>
             </div>
         </main>
-        <b-modal id="ban-user" centered title="禁用用户" hide-footer hide-header-close>
-            <div v-if="current_user.status">
-                用户将被禁用，是否确定?
-                <b-button variant="danger" @click="sure">确定</b-button>
-            </div>
-            <div v-else>
-                用户已被禁用，是否恢复?
-                <b-button variant="danger" @click="sure">恢复</b-button>
-            </div>
-        </b-modal>
-        <b-modal id="choose-group" centered title="修改组" hide-footer hide-header-close>
-            <b-form-select v-model="group_rule" text-field="name" value-field="rule" :options="group_list" class="mb-2"></b-form-select>
-            <b-button @click="sureGroup" class="mt-2" variant="primary">提交</b-button>
-        </b-modal>
-        <b-modal id="reset-password" centered title="重置用户密码" hide-footer hide-header-close>
-            <div>
-                用户密码将被重置，是否确定?
-                <b-button variant="danger" @click="sureResetPassword">确定</b-button>
-            </div>
-        </b-modal>
-        <b-modal id="user-detail-info" centered title="用户详细信息" hide-footer hide-header-close>
-            <b-table stacked :items="user_items" :fields="user_fields"></b-table>
-        </b-modal>
     </div>
 </template>
 
@@ -130,28 +90,14 @@
         data() {
             return {
                 current_user: {},
-                user_items: [],
-                user_fields: [
-                    {key: 'ak',label:'访问密钥'},
-                    {key: 'fk',label:'文件密钥'},
-                    {key: 'iv',label:'密钥向量'},
-                    {key: 'create_time',label:'创建时间'},
-                    {key: 'email',label:'邮箱'},
-                    {key: 'id',label:'ID'},
-                    {key: 'status',label:'状态'},
-                    {key: 'phone',label:'电话'},
-                    {key: 'username',label:'用户名'},
-
-                ],
                 group_rule: null,
-                user_list: [],
+                log_list: [],
                 fields: [
+                    {key: 'uid', label: 'ID'},
                     {key: 'username', label: '用户名'},
-                    {key: 'email', label: '邮箱'},
-                    {key: 'create_time', label: '创建时间', class: 'text-center'},
-                    {key: 'actions', label: '操作'},
                 ],
-                group_list: [],
+                detail_info_list: [],
+                detail_info_fields: [],
                 pagination: {
                     perPage: 15,
                     currentPage: 1,
@@ -160,124 +106,34 @@
             }
         },
         methods: {
-            ban(user) {
-                this.current_user = user;
-                this.$bvModal.show('ban-user');
-            },
-            sure() {
-                let headers = {
-                    token: sessionStorage.getItem("_admin_token"),
-                };
-                this.$ajax
-                    .get(this.server +"/api/admin/user/disabled?id="+this.current_user.id,{
-                        headers:headers
-                    })
-                    .then(response => {
-                        this.$bvModal.hide('ban-user');
-                        this.refresh();
-                    })
-                    .catch(error => {
-                        //获取失败
-                        console.log(error.response);
-                    });
-            },
-
-            group(item){
-                this.current_user = item;
-                this.$bvModal.show('choose-group');
-            },
-            sureGroup(){
-                //修改用户组信息 [容量修改]
-                let headers = {
-                    token: sessionStorage.getItem("_admin_token"),
-                };
-                this.$ajax
-                    .get(this.server + "/api/admin/user/group/update?username="+this.current_user.username+"&role="+this.group_rule, {
-                        headers: headers
-                    })
-                    .then(response => {
-                        this.$bvModal.hide('choose-group');
-                        this.refresh();
-                    })
-                    .catch(error => {
-                        //获取失败
-                        console.log(error.response);
-                    });
-
-            },
-
-            resetPassword(user){
-                this.current_user = user;
-                this.$bvModal.show('reset-password');
-            },
-            sureResetPassword(){
-                let headers = {
-                    token: sessionStorage.getItem("_admin_token"),
-                };
-                this.$ajax
-                    .get(this.server +"/api/admin/user/reset?id="+this.current_user.id,{
-                        headers:headers
-                    })
-                    .then(response => {
-                        this.$bvModal.hide('reset-password')
-                    })
-                    .catch(error => {
-                        //获取失败
-                        console.log(error.response);
-                    });
-            },
-
-            userDetailInfo(user){
-                this.user_items.splice(0);
-                this.user_items.push(user);
-                this.$bvModal.show('user-detail-info');
-            },
-
             refresh() {
                 let headers = {
                     token: sessionStorage.getItem("_admin_token"),
                 };
                 this.$ajax
-                    .get(this.server + "/api/admin/user/list", {
+                    .get(this.server + "/api/admin/log/list", {
                         headers: headers
                     })
                     .then(response => {
-                        this.user_list.splice(0);
-                        this.user_list.push.apply(this.user_list,response.data.data);
+                        this.log_list.splice(0);
+                        this.log_list.push.apply(this.log_list,response.data.data);
                     })
                     .catch(error => {
                         //获取失败
                         console.log(error.response);
                     });
             },
-            getGroup() {
-                let headers = {
-                    token: sessionStorage.getItem("_admin_token"),
-                };
-                this.$ajax
-                    .get(this.server + "/api/admin/group/list", {
-                        headers: headers
-                    })
-                    .then(response => {
-                        this.group_list.splice(0);
-                        this.group_list.push.apply(this.group_list, response.data.data);
-                    })
-                    .catch(error => {
-                        //获取失败
-                        console.log(error.response);
-                    });
-            },
-            getUserList() {
+            getUserLogList() {
                 //获取用户列表
                 let headers = {
                     token: sessionStorage.getItem("_admin_token"),
                 };
                 this.$ajax
-                    .get(this.server +"/api/admin/user/list",{
+                    .get(this.server +"/api/admin/log/list",{
                         headers:headers
                     })
                     .then(response => {
-                        this.user_list.push.apply(this.user_list,response.data.data);
+                        this.log_list.push.apply(this.log_list,response.data.data);
                     })
                     .catch(error => {
                         //获取失败
@@ -286,12 +142,11 @@
             }
         },
         created() {
-            this.getUserList();
-            this.getGroup();
+            this.getUserLogList();
         },
         computed: {
             rows() {
-                return this.user_list.length
+                return this.log_list.length
             }
         }
     }

@@ -31,6 +31,67 @@
                         </form>
                     </div>
                 </div>
+                <div class="card spur-card">
+                    <div class="card-header">
+                        <div class="spur-card-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="spur-card-title"> 行为信息 </div>
+                    </div>
+                    <div class="card-body ">
+                        <b-list-group>
+                            <b-list-group-item href="#" active class="flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">时间</h5>
+                                </div>
+                                <p class="mb-1">
+                                    本次操作时间: <strong>{{log.current_time}}</strong>.
+                                </p>
+                                <small>上次操作时间: <strong>{{log.last_time}}</strong>.</small>
+                            </b-list-group-item>
+
+                            <b-list-group-item href="#" class="flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">IP</h5>
+                                </div>
+                                <p class="mb-1">
+                                    本次操作IP: <strong>{{log.current_ip}}</strong>.
+                                </p>
+                                <small class="text-muted">上次操作IP: <strong>{{log.last_ip}}</strong>.</small>
+                            </b-list-group-item>
+
+                            <b-list-group-item href="#" class="flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">地址</h5>
+                                </div>
+                                <p class="mb-1">
+                                    本次操作地址: <strong>{{log.current_address}}</strong>.
+                                </p>
+                                <small class="text-muted">上次操作地址: <strong>{{log.last_address}}</strong>.</small>
+                            </b-list-group-item>
+
+                            <b-list-group-item href="#" class="flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">代理</h5>
+                                </div>
+                                <p class="mb-1">
+                                    本次操作代理: <strong>{{log.current_user_agent}}</strong>.
+                                </p>
+                                <small class="text-muted">上次操作代理: <strong>{{log.last_user_agent}}</strong>.</small>
+                            </b-list-group-item>
+
+                            <b-list-group-item href="#" class="flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">操作</h5>
+                                </div>
+                                <p class="mb-1">
+                                    本次操作地址: <strong>{{log.current_operate}}</strong>.
+                                </p>
+                                <small class="text-muted">上次操作地址: <strong>{{log.last_operate}}</strong>.</small>
+                            </b-list-group-item>
+                        </b-list-group>
+                    </div>
+                </div>
             </b-col>
         </b-row>
     </b-container>
@@ -42,7 +103,8 @@
         data() {
             return {
                 user: {},
-                uinfo: {}
+                uinfo: {},
+                log: {}
             }
         },
         methods: {
@@ -85,21 +147,14 @@
                     })
                     .catch(error => {
                         console.log(error.response);
-                        return;
                     });
-            }
-        },
-        created() {
-            if(!this.getToken()) {
-                //没有token相关信息 页面重定向
-                return;
-            }else{
-                // 登录成功 获取文件根目录
+            },
+            getUserInfo(){
                 var headers = {
                     Authorization: "Bearer " + this.user.token,
                     uid: this.user.uid
                 };
-                //获取根文件列表
+                //获取用户信息
                 this.$ajax
                     .get(this.server +"/api/user/profile",{
                         headers:headers
@@ -111,6 +166,34 @@
                         //获取根目录失败
                         console.log(error.response)
                     });
+            },
+            getUserLog(){
+                var headers = {
+                    Authorization: "Bearer " + this.user.token,
+                    uid: this.user.uid
+                };
+                //获取用户信息
+                this.$ajax
+                    .get(this.server +"/api/user/log",{
+                        headers:headers
+                    })
+                    .then(response => {
+                        this.log = response.data.data;
+                    })
+                    .catch(error => {
+                        //获取根目录失败
+                        console.log(error.response)
+                    });
+            }
+        },
+        created() {
+            if(!this.getToken()) {
+                //没有token相关信息 页面重定向
+                return;
+            }else{
+                // 登录成功 获取文件根目录
+                this.getUserInfo();
+                this.getUserLog();
             }
         }
     };

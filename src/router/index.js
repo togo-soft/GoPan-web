@@ -106,6 +106,11 @@ const routes = [
                 path: 'role',
                 name: 'admin-role',
                 component: () => import('../views/admin/RoleManager.vue')
+            },
+            {
+                path: 'log',
+                name: 'admin-log',
+                component: () => import('../views/admin/UserLogManager.vue')
             }
         ]
     },
