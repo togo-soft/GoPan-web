@@ -268,6 +268,7 @@
                 .then(response => {
                     //收藏成功
                     console.log(response.data);
+                    alert('收藏成功!')
                 })
                 .catch(error => {
                     console.log(error.response);

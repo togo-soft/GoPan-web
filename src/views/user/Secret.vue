@@ -345,7 +345,8 @@
                         headers: headers
                     })
                     .then(response => {
-                        console.log(response.data);
+                        this.refresh();
+                        this.$bvModal.hide('secret-upload');
                     })
                     .catch(error => {
                         console.log(error.response)

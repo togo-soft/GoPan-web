@@ -9,7 +9,7 @@
                                 <div class="card-header border-0">
                                     <div class="row align-items-center">
                                         <div class="col">
-                                            <h4>用户行为日志管理</h4>
+                                            <h4>用户行为</h4>
                                         </div>
                                         <div class="col">
                                             <b-input-group size="sm">
@@ -41,27 +41,46 @@
                                             :filter="filter"
                                             table-class="table-style"
                                     >
+                                        <template v-slot:cell(uid)="row">
+                                            <div class="field-style">
+                                                {{ row.value }}
+                                            </div>
+                                        </template>
                                         <template v-slot:cell(username)="row">
                                             <div class="field-style">
                                                 {{ row.value }}
                                             </div>
                                         </template>
 
-                                        <template v-slot:cell(nickname)="row">
+                                        <template v-slot:cell(current_address)="row">
                                             <div class="field-style">
                                                 {{ row.value }}
                                             </div>
                                         </template>
 
-                                        <template v-slot:cell(email)="row">
+                                        <template v-slot:cell(current_ip)="row">
                                             <div class="field-style">
                                                 {{ row.value }}
                                             </div>
                                         </template>
 
-                                        <template v-slot:cell(create_time)="row">
+                                        <template v-slot:cell(current_time)="row">
                                             <div class="field-style">
                                                 {{ row.value }}
+                                            </div>
+                                        </template>
+
+                                        <template v-slot:cell(current_operate)="row">
+                                            <div class="field-style">
+                                                {{ row.value }}
+                                            </div>
+                                        </template>
+
+                                        <template v-slot:cell(actions)="row">
+                                            <div class="field-style">
+                                                <a class="ban" href="javascript:void(0)" title="详细信息" @click="show(row.item)">
+                                                    <i class="fas fa-asterisk"></i>
+                                                </a>
                                             </div>
                                         </template>
 
@@ -81,6 +100,9 @@
                 </b-container>
             </div>
         </main>
+        <b-modal id="log-detail" centered title="详细信息" hide-footer hide-header-close>
+            <b-table stacked :items="log_detail_items" :fields="log_detail_fields"></b-table>
+        </b-modal>
     </div>
 </template>
 
@@ -90,14 +112,31 @@
         data() {
             return {
                 current_user: {},
-                group_rule: null,
                 log_list: [],
                 fields: [
                     {key: 'uid', label: 'ID'},
                     {key: 'username', label: '用户名'},
+                    {key: 'current_address',label: '地址'},
+                    {key: 'current_ip',label: 'IP'},
+                    {key: 'current_operate',label: '操作'},
+                    {key: 'current_time',label: '时间'},
+                    {key: 'actions', label: '操作'}
                 ],
-                detail_info_list: [],
-                detail_info_fields: [],
+                log_detail_items: [],
+                log_detail_fields: [
+                    {key: 'uid',label:'用户ID'},
+                    {key: 'username',label:'用户名'},
+                    {key: 'last_address',label:'上次操作地址'},
+                    {key: 'current_address',label:'本次操作地址'},
+                    {key: 'last_ip',label:'上次操作IP'},
+                    {key: 'current_ip',label:'本次操作IP'},
+                    {key: 'last_time',label:'上次操作时间'},
+                    {key: 'current_time',label:'本次操作时间'},
+                    {key: 'last_user_agent',label:'上次操作代理'},
+                    {key: 'current_user_agent',label:'本次操作代理'},
+                    {key: 'last_operate',label:'上次操作'},
+                    {key: 'current_operate',label:'本次操作'},
+                ],
                 pagination: {
                     perPage: 15,
                     currentPage: 1,
@@ -139,7 +178,12 @@
                         //获取失败
                         console.log(error.response);
                     });
-            }
+            },
+            show(obj){
+                this.log_detail_items.splice(0);
+                this.log_detail_items.push(obj);
+                this.$bvModal.show('log-detail');
+            },
         },
         created() {
             this.getUserLogList();

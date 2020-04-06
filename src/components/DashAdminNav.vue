@@ -14,6 +14,8 @@
                 <i class="fas fa-user-friends"></i> 用户管理 </router-link>
             <router-link :to="{name:'admin-role'}" class="dash-nav-item">
                 <i class="fas fa-users-cog"></i> 规则管理 </router-link>
+            <router-link :to="{name:'admin-log'}" class="dash-nav-item">
+                <i class="fas fa-users-cog"></i> 行为检查 </router-link>
             <router-link :to="{name:'admin-cluster'}" class="dash-nav-item">
                 <i class="fas fa-cloud"></i> 集群管理 </router-link>
             <div class="dash-nav-dropdown">
