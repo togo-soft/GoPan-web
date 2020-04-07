@@ -11,7 +11,8 @@
         </b-alert>
         <div v-if="isRegister">
             <b-alert variant="warning" dismissible show>
-                {{warningMessage}}, <router-link :to="{name:'login'}">立即登录</router-link>
+                {{warningMessage}},
+                <router-link :to="{name:'login'}">立即登录</router-link>
             </b-alert>
         </div>
         <div class="card-body">
@@ -19,6 +20,10 @@
             <form role="form">
                 <b-form-group label="用户名">
                     <b-form-input id="username" v-model="user.username" required autofocus></b-form-input>
+                </b-form-group>
+
+                <b-form-group label="工/学号">
+                    <b-form-input id="sid" v-model="user.sid" required></b-form-input>
                 </b-form-group>
 
                 <b-form-group label="邮箱">
@@ -70,7 +75,8 @@
                     email: '',
                     password: '',
                     repassword: '',
-                    agree: false
+                    sid: '',
+                    agree: false,
                 },
                 dismissSecs: 3,
                 dismissCountDown: 0,
@@ -90,6 +96,7 @@
                 //  检测输入
                 if (
                     this.user.username === "" ||
+                    this.user.sid === "" ||
                     this.user.email === "" ||
                     this.user.password === "" ||
                     this.user.repassword === ""
@@ -106,12 +113,13 @@
                 let param = new URLSearchParams({
                     username: this.user.username,
                     password: this.user.password,
-                    email: this.user.email
+                    email: this.user.email,
+                    sid: this.user.sid,
                 });
                 let _this = this;
                 this.$ajax
-                    .post(_this.server +"/api/general/signup", param)
-                    .then(function(response) {
+                    .post(_this.server + "/api/general/signup", param)
+                    .then(function (response) {
                         console.log(response.data);
                         if (response.data.code === 200) {
                             _this.warningMessage = '注册成功,请登录!';

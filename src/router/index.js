@@ -122,7 +122,12 @@ const routes = [
     {
         name: 'share-list',
         path: '/share/:key',
-        component: () => import('../views/Share')
+        component: () => import('../views/Share.vue')
+    },
+    {
+        name: 'find',
+        path: '/find/:args',
+        component: () => import('../views/Find.vue')
     },
     {
         name: 'admin-auth',

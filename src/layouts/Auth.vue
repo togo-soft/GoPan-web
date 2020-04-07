@@ -5,7 +5,9 @@
                 <div class="row justify-content-md-center align-items-center h-100">
                     <div class="card-wrapper">
                         <div class="brand">
-                            <img src="/img/GP.png" alt="logo">
+                            <a href="/">
+                                <img src="/img/GP.png" alt="logo">
+                            </a>
                         </div>
                         <router-view></router-view>
                         <div class="footer">

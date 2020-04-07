@@ -27,25 +27,8 @@
                             <div class="card-header border-0">
                                 <div class="row align-items-center">
                                     <div class="col">
-                                        <h3>{{filename}}</h3>
+                                        <h3>{{args}}</h3>
                                     </div>
-                                    <div v-if="isLogin" class="col text-right">
-                                        <b-button type="button" variant="primary" @click="collection">
-                                            <i class="far fa-heart"></i> Collection
-                                        </b-button>
-                                    </div>
-                                </div>
-                                <div v-if="path_items.length >= 1" class="row align-items-center">
-                                    <h5 class="mb-0 path-style">
-                                        <template>
-                                            <b-breadcrumb>
-                                                <b-breadcrumb-item v-for="item in path_items"
-                                                                   @click="changeSuperiorDir(item.key)">
-                                                    {{item.text}}
-                                                </b-breadcrumb-item>
-                                            </b-breadcrumb>
-                                        </template>
-                                    </h5>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -65,46 +48,32 @@
                                                     <i class="fas fa-folder"></i>
                                                     </span>
                                                 <span class="name mb-0 text-sm">
-                                                        <a href="javascript:void(0)" @click="changeDir(row.value,row.item.fsk)">{{row.value}}</a>
+                                                    <a :href="website + row.item.fsk">{{row.value}}</a>
                                                     </span>
                                             </div>
 
                                             <div v-else>
-                                                    <span class="avatar rounded-circle" style="font-size: 24px; color: Mediumslateblue;">
+                                                    <span class="avatar rounded-circle"
+                                                          style="font-size: 24px; color: Mediumslateblue;">
                                                         <i :class="iconType(row.value)"></i>
                                                     </span>
                                                 <span class="name mb-0 text-sm">
-                                                        {{row.value}}
+                                                        <a :href="website + row.item.fsk">{{row.value}}</a>
                                                     </span>
                                             </div>
 
-                                        </div>
-                                    </template>
-
-                                    <template v-slot:cell(size)="row">
-                                        <div class="field-style">
-                                                <span v-if="row.value < 1000">
-                                                    {{row.value}} MB
-                                                </span>
-                                            <span v-else>
-                                                    {{(row.value / 1024).toFixed(2)}} GB
-                                                </span>
                                         </div>
                                     </template>
 
                                     <template v-slot:cell(uptime)="row">
                                         <div class="field-style">
-                                            {{row.value}}
+                                            {{ row.value }}
                                         </div>
                                     </template>
 
-                                    <template v-slot:cell(actions)="row">
-                                        <div class="field-style text-primary">
-                                            <span v-if="!row.item.isDir">
-                                                    <a class="download" :href="downloadFile(row.item)" title="download">
-                                                        <i class="fas fa-arrow-circle-down"></i>
-                                                    </a>
-                                                </span>
+                                    <template v-slot:cell(fsk)="row">
+                                        <div class="field-style">
+                                            {{ row.value }}
                                         </div>
                                     </template>
 
@@ -122,22 +91,22 @@
     import FileTools from "@/functions/FileTools";
 
     export default {
-        name: 'share',
-        data(){
+        name: 'find',
+        data() {
             return {
                 isLogin: false,
                 path_items: [],
                 items: [],
                 fields: [
-                    {key: 'filename', label: 'FileName'},
-                    {key: 'size', label: 'Size'},
-                    {key: 'uptime', label: 'Update Time', class: 'text-center'},
-                    {key: 'actions', label: 'Actions'},
+                    {key: 'filename', label: '文件名'},
+                    {key: 'fsk', label: '共享码'},
+                    {key: 'uptime', label: '上传时间', class: 'text-center'},
                 ],
                 user: {},// token uid username
                 filename: '',//根文件夹的名称 标识当前分享的名称
                 now_path_key: '', //当前文件目录下的fsk
-                root_key: ''
+                args: '',
+                website: '',
             }
         },
         methods: {
@@ -148,7 +117,7 @@
                     //图片后缀
                     return {
                         fas: true,
-                        'fas fa-file-image':true
+                        'fas fa-file-image': true
                     }
                 } else if (result === 'radio') {
                     return {
@@ -170,22 +139,22 @@
                         fas: true,
                         'fas fa-file-word': true
                     }
-                }else if (result === 'pdf'){
+                } else if (result === 'pdf') {
                     return {
                         fas: true,
                         'fas fa-file-pdf': true
                     }
-                }else if (result === 'ppt'){
+                } else if (result === 'ppt') {
                     return {
                         fas: true,
                         'fas fa-file-powerpoint': true
                     }
-                }else if (result === 'excel'){
+                } else if (result === 'excel') {
                     return {
                         fas: true,
                         'fas fa-file-excel': true
                     }
-                }else if (result === 'code') {
+                } else if (result === 'code') {
                     return {
                         fas: true,
                         'fas fa-file-code': true
@@ -216,14 +185,14 @@
             downloadFile(item) {
                 return this.storage + item.filepath;
             },
-            changeSuperiorDir(key){
+            changeSuperiorDir(key) {
                 //面包屑里的返回上级目录
-                const index = this.path_items.findIndex(item=> item.key === key);
-                this.path_items.splice(index+1,this.path_items.length-1);
+                const index = this.path_items.findIndex(item => item.key === key);
+                this.path_items.splice(index + 1, this.path_items.length - 1);
                 this.now_path_key = key;
                 this.refresh();
             },
-            changeDir(dirname,key) {
+            changeDir(dirname, key) {
                 console.log(key);
                 //改变当前主目录ID 再调用刷新即可
                 this.now_path_key = key;
@@ -233,69 +202,31 @@
             refresh() {
                 //获取当前文件夹文件列表
                 this.$ajax
-                    .get(this.server +"/api/general/share?key="+this.now_path_key)
+                    .get(this.server + "/api/general/share?key=" + this.now_path_key)
                     .then(response => {
                         this.items.splice(0);
-                        this.items.push.apply(this.items,response.data.data);
+                        this.items.push.apply(this.items, response.data.data);
                     })
                     .catch(error => {
                         //获取根目录失败
                     });
             },
-            setNowPathKey(key) {
-                this.now_path_key = key;
-                this.path_items.push({text: 'All File', key: key})
-            },
-            collection() {
-                //没有登陆,无法继续操作
-                if (!this.isLogin) {
-                    alert('操作非法');
-                    return
-                }
-                let headers = {
-                    Authorization: "Bearer " + this.user.token,
-                    uid: this.user.uid
-                };
-                let param = new URLSearchParams({
-                    username: this.user.username,
-                    fsk: this.root_key,
-                    filename: this.filename
-                });
-                this.$ajax
-                    .post(this.server +"/api/file/collection", param,{
-                        headers: headers
-                    })
-                .then(response => {
-                    //收藏成功
-                    console.log(response.data);
-                    alert('收藏成功!')
-                })
-                .catch(error => {
-                    console.log(error.response);
-                })
-            }
         },
         created() {
-            //检测是否登录
-            if (this.getToken()) {
-                this.isLogin = true;
-            }
-            //获取文件Key
-            let key = this.$route.params.key;
-            //存储 root-key
-            this.root_key = key;
+            this.website = this.client + '/share/';
+            //存储 sid
+            this.args = this.$route.params.args;
             //获取文件列表
             this.$ajax
-                .get(this.server +"/api/general/share?key="+key)
+                .get(this.server + "/api/general/share/user?args=" + this.args)
                 .then(response => {
-                    this.items.push.apply(this.items,response.data.data);
+                    this.items.push.apply(this.items, response.data.data);
                     this.filename = response.data.message;
-                    if (response.data.count > 1) {
-                        this.setNowPathKey(key);
-                    }
                 })
                 .catch(error => {
                     //获取根目录失败
+                    alert('查询用户不存在');
+                    return;
                 });
         }
     }
@@ -329,18 +260,18 @@
         background-color: #fff;
     }
 
-    .btn-primary,.btn-danger {
+    .btn-primary, .btn-danger {
         border-radius: 5px !important;
     }
 
     .breadcrumb {
-        background-color: rgba(0,0,0,0) !important;
+        background-color: rgba(0, 0, 0, 0) !important;
         margin-bottom: 0 !important;
     }
 
     .avatar {
         color: #fff;
-        background-color: rgba(0,0,0,0);
+        background-color: rgba(0, 0, 0, 0);
         display: inline-flex;
         -webkit-box-align: center;
         -ms-flex-align: center;
@@ -353,8 +284,9 @@
         height: 48px;
         width: 48px;
     }
+
     .rounded-circle {
-        border-radius: 50%!important;
+        border-radius: 50% !important;
     }
 
     .path-style {
@@ -382,6 +314,7 @@
         thead {
             background-color: #f6f9fc;
             color: #8898aa;
+
             tr {
                 th {
                     padding-left: 1.5rem;
@@ -389,6 +322,7 @@
                 }
             }
         }
+
         tbody tr td {
             padding-left: 1.4rem;
         }

@@ -32,7 +32,7 @@
             </div>
         </div>
         <main class="mb-4 main-container">
-            <b-container>
+            <b-container class="mb-4">
                 <h2 class="text-center">
                     查询共享文件
                 </h2>
@@ -43,6 +43,19 @@
                 </b-row>
                 <div class="text-center mt-3">
                     <b-button variant="primary" @click="find">查询</b-button>
+                </div>
+            </b-container>
+            <b-container>
+                <h2 class="text-center">
+                    用户查询
+                </h2>
+                <b-row>
+                    <b-col xl="6" lg="6" md="12" sm="12" offset-xl="3" offset-lg="3">
+                        <b-form-input v-model="sid" placeholder="输入用户名或者工/学号"></b-form-input>
+                    </b-col>
+                </b-row>
+                <div class="text-center mt-3">
+                    <b-button variant="primary" @click="findUser">查询</b-button>
                 </div>
             </b-container>
             <b-container fluid class="mt-5">
@@ -172,6 +185,7 @@ $ go run .
                     height: 50,
                 },
                 fsk: '',
+                sid: '',
                 user: {}
 
             };
@@ -196,6 +210,15 @@ $ go run .
                 this.$router.push({
                     path: this.redirect || "/share/" + this.fsk
                 });
+            },
+            findUser() {
+                if(this.sid === "") {
+                    alert('输入不能为空');
+                    return
+                }
+                this.$router.push({
+                    path: this.redirect || '/find/' + this.sid
+                })
             }
         },
         created() {
