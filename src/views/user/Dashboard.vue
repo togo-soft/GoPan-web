@@ -303,6 +303,14 @@
                     });
             },
             async uploadFile() {
+                //判断文件是否为空
+                if (this.file.current_file === null) {
+                    this.file.show_upload_result = true;
+                    this.file.dismissCountDown = this.file.dismissSecs;
+                    this.file.show_message = '未选择上传文件!';
+                    this.file.alertVariant = 'danger';
+                    return ;
+                }
                 this.file.show_progress = true;
                 let param = new FormData();
                 param.append('file', this.file.current_file);

@@ -16,6 +16,10 @@
                                 <input type="text" class="form-control" id="Username" v-model="uinfo.username" readonly>
                             </div>
                             <div class="form-group">
+                                <label for="Username">工/学号</label>
+                                <input type="text" class="form-control" id="Sid" v-model="uinfo.sid" readonly>
+                            </div>
+                            <div class="form-group">
                                 <label for="Email">Email 地址</label>
                                 <input type="email" class="form-control" id="Email" v-model="uinfo.email" placeholder="name@example.com">
                             </div>
@@ -124,6 +128,10 @@
                 return !(this.user.token === null || this.user.uid === null);
             },
             profile(){
+                if (this.uinfo.password === '' || this.uinfo.password === undefined || this.uinfo.email === '') {
+                    alert('密码和邮箱选项不能为空');
+                    return;
+                }
                 this.getToken();
                 let param = new URLSearchParams({
                     email: this.uinfo.email,
@@ -147,6 +155,7 @@
                     })
                     .catch(error => {
                         console.log(error.response);
+                        return;
                     });
             },
             getUserInfo(){

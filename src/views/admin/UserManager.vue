@@ -118,8 +118,19 @@
                 <b-button variant="danger" @click="sureResetPassword">确定</b-button>
             </div>
         </b-modal>
-        <b-modal id="user-detail-info" centered title="用户详细信息" hide-footer hide-header-close>
-            <b-table stacked :items="user_items" :fields="user_fields"></b-table>
+        <b-modal id="user-detail-info" centered title="用户详细信息" hide-footer hide-header-close size="lg">
+            <b-container fluid>
+                <b-table stacked :items="user_items" :fields="user_fields">
+                    <template v-slot:cell(status)="row">
+                        <span v-if="row.value">
+                            正常
+                        </span>
+                        <span v-else>
+                            禁用
+                        </span>
+                    </template>
+                </b-table>
+            </b-container>
         </b-modal>
     </div>
 </template>

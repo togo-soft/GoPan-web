@@ -27,7 +27,7 @@ Vue.use(VueClipboard);
 
 Vue.config.productionTip = false;
 Vue.prototype.$ajax = Axios;
-Vue.prototype.client = 'http://192.168.1.100:8080'; // 本(客户端)服务地址
+Vue.prototype.client = 'http://192.168.1.100'; // 本(客户端)服务地址
 Vue.prototype.server = 'http://192.168.1.201:7125'; // 服务端地址
 Vue.prototype.storage = 'http://192.168.1.201:8080'; //存储服务器地址
 

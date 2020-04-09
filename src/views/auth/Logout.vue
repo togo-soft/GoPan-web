@@ -15,7 +15,8 @@
         },
         created() {
             //注销登录
-
+            localStorage.clear();
+            sessionStorage.clear();
         },
         methods: {
             login() {
